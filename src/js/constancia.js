@@ -181,28 +181,27 @@ function generarConstancia() {
 
   const cierre = `Es conforme a su original con la cual se confrontó, y para los efectos de ${efectos}, se extiende la presente en ${lugar}, a ${hoyTexto}.`;
 
-  // Generar PDF con jsPDF
   const { jsPDF } = window.jspdf;
-  // Tamaño oficio: 216mm x 356mm
   const doc = new jsPDF({ unit: 'mm', format: [216, 356] });
 
-  const margenIzq  = 20;
-  const margenDer  = 20;
+  const margenIzq  = 25;
+  const margenDer  = 25;
   const anchoTexto = 216 - margenIzq - margenDer;
-  let y            = 100; // Empieza debajo del membrete
-  const lineHeight = 7;
+  let y            = 100;
+  const lh         = 7;
 
-  doc.setFont('times', 'normal');
-
-  // Título
+  // Titulo centrado y subrayado
   doc.setFont('times', 'bold');
   doc.setFontSize(13);
   const tituloLines = doc.splitTextToSize(titulo, anchoTexto);
   tituloLines.forEach(line => {
-    doc.text(line, 216/2, y, { align: 'center' });
-    y += lineHeight;
+    const xCenter = 216 / 2;
+    doc.text(line, xCenter, y, { align: 'center' });
+    const lineWidth = doc.getTextWidth(line);
+    doc.line(xCenter - lineWidth/2, y+1, xCenter + lineWidth/2, y+1);
+    y += lh;
   });
-  y += 6;
+  y += 5;
 
   // Intro
   doc.setFont('times', 'normal');
@@ -210,28 +209,28 @@ function generarConstancia() {
   const introLines = doc.splitTextToSize(intro, anchoTexto);
   introLines.forEach(line => {
     doc.text(line, margenIzq, y);
-    y += lineHeight;
+    y += lh;
   });
-  y += 6;
+  y += 5;
 
-  // Cuerpo — con negritas para el nombre
+  // Cuerpo
   const cuerpoLines = doc.splitTextToSize(cuerpo, anchoTexto);
   cuerpoLines.forEach(line => {
-    doc.text(line, margenIzq, y, { maxWidth: anchoTexto, align: 'justify' });
-    y += lineHeight;
+    doc.text(line, margenIzq, y);
+    y += lh;
   });
-  y += 6;
+  y += 5;
 
   // Rubrica
   doc.text(rubrica, margenIzq, y);
-  y += lineHeight * 2;
+  y += lh * 2;
 
-  // Al margen
+  // Al margen — negrita
   doc.setFont('times', 'bold');
   const margenLines = doc.splitTextToSize(margen, anchoTexto);
   margenLines.forEach(line => {
     doc.text(line, margenIzq, y);
-    y += lineHeight;
+    y += lh;
   });
   y += 4;
 
@@ -241,7 +240,7 @@ function generarConstancia() {
     const anotLines = doc.splitTextToSize(anotaciones, anchoTexto);
     anotLines.forEach(line => {
       doc.text(line, margenIzq, y);
-      y += lineHeight;
+      y += lh;
     });
     y += 4;
   }
@@ -250,11 +249,10 @@ function generarConstancia() {
   doc.setFont('times', 'normal');
   const cierreLines = doc.splitTextToSize(cierre, anchoTexto);
   cierreLines.forEach(line => {
-    doc.text(line, margenIzq, y, { maxWidth: anchoTexto, align: 'justify' });
-    y += lineHeight;
+    doc.text(line, margenIzq, y);
+    y += lh;
   });
 
-  // Nombre del archivo
   const nombreArchivo = `${titulo.replace(/\./g,'').replace(/ /g,'_')}_${(r.nombres||r.esposo_nombres||'').replace(/ /g,'_')}.pdf`;
   doc.save(nombreArchivo);
 }
