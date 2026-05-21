@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Busqueda Global — Parroquias SV</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="../src/css/main.css">
+  <link rel="stylesheet" href="../src/css/print.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">✝</div>
+      <div class="sidebar-brand-text"><strong>Parroquias SV</strong><span>Sistema Sacramental</span></div>
+    </div>
+    <div class="sidebar-parroquia"><i class="ti ti-building-church"></i><span>Archivo Digital</span></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Principal</div>
+      <a href="dashboard.html" class="nav-item"><i class="ti ti-layout-dashboard"></i> Panel de Control</a>
+      <a href="busqueda.html" class="nav-item active"><i class="ti ti-search"></i> Busqueda Global</a>
+      <div class="nav-section">Libros Sacramentales</div>
+      <a href="bautismos.html" class="nav-item"><i class="ti ti-droplet"></i> Bautismos</a>
+      <a href="confirmaciones.html" class="nav-item"><i class="ti ti-flame"></i> Confirmaciones</a>
+      <a href="comuniones.html" class="nav-item"><i class="ti ti-bread"></i> Primeras Comuniones</a>
+      <a href="matrimonios.html" class="nav-item"><i class="ti ti-rings"></i> Matrimonios</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar"><i class="ti ti-user" style="font-size:13px;"></i></div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="usuario-nombre">Usuario</div>
+          <div class="sidebar-user-role">Secretaria</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logout()"><i class="ti ti-logout"></i> Cerrar sesion</button>
+    </div>
+  </aside>
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-breadcrumb">Principal</span>
+      <span class="topbar-sep">/</span>
+      <span class="topbar-title">Busqueda Global</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-date" id="fecha-hoy"></span>
+    </div>
+  </div>
+
+  <main class="main">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h2>Busqueda Global</h2>
+        <p>Busca cualquier sacramento registrado en el sistema</p>
+      </div>
+    </div>
+
+    <!-- Filtros de busqueda -->
+    <div class="card" style="margin-bottom:1.25rem;">
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:1rem; align-items:end;">
+        <div class="field">
+          <label>Nombre</label>
+          <input type="text" id="filtro-nombre" placeholder="Ej: Maria">
+        </div>
+        <div class="field">
+          <label>Apellido</label>
+          <input type="text" id="filtro-apellido" placeholder="Ej: Garcia">
+        </div>
+        <div class="field">
+          <label>Numero de partida</label>
+          <input type="text" id="filtro-partida" placeholder="Ej: 045">
+        </div>
+        <button class="btn-gold" onclick="buscar()" style="height:38px;">
+          <i class="ti ti-search"></i> Buscar
+        </button>
+      </div>
+      <div style="margin-top:0.75rem; display:flex; gap:8px; align-items:center;">
+        <span style="font-size:12px; color:var(--gray-400);">Filtrar por tipo:</span>
+        <label style="font-size:13px; display:flex; align-items:center; gap:4px; cursor:pointer;">
+          <input type="checkbox" id="f-bautismo" checked> Bautismo
+        </label>
+        <label style="font-size:13px; display:flex; align-items:center; gap:4px; cursor:pointer;">
+          <input type="checkbox" id="f-confirmacion" checked> Confirmacion
+        </label>
+        <label style="font-size:13px; display:flex; align-items:center; gap:4px; cursor:pointer;">
+          <input type="checkbox" id="f-comunion" checked> Primera Comunion
+        </label>
+        <label style="font-size:13px; display:flex; align-items:center; gap:4px; cursor:pointer;">
+          <input type="checkbox" id="f-matrimonio" checked> Matrimonio
+        </label>
+      </div>
+    </div>
+
+    <!-- Resultados -->
+    <div id="resultados-wrap">
+      <div class="card">
+        <div class="empty-state">
+          <i class="ti ti-search"></i>
+          <p>Ingresa un nombre, apellido o numero de partida para buscar.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../src/js/constancia.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../src/js/config.js"></script>
+<script src="../src/js/auth.js"></script>
+<script src="../src/js/busqueda.js"></script>
+<script>
+  document.getElementById('fecha-hoy').textContent = new Date().toLocaleDateString('es-SV',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  (async () => { await requireAuth(); await mostrarUsuario(); })();
+
+  // Buscar con Enter
+  ['filtro-nombre','filtro-apellido','filtro-partida'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') buscar(); });
+  });
+</script>
+</body>
+</html>

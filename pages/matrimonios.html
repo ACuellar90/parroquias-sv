@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matrimonios — Parroquias SV</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="../src/css/main.css">
+  <link rel="stylesheet" href="../src/css/print.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">✝</div>
+      <div class="sidebar-brand-text"><strong>Parroquias SV</strong><span>Sistema Sacramental</span></div>
+    </div>
+    <div class="sidebar-parroquia"><i class="ti ti-building-church"></i><span>Archivo Digital</span></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Principal</div>
+      <a href="dashboard.html" class="nav-item"><i class="ti ti-layout-dashboard"></i> Panel de Control</a>
+      <a href="busqueda.html" class="nav-item"><i class="ti ti-search"></i> Busqueda Global</a>
+      <div class="nav-section">Libros Sacramentales</div>
+      <a href="bautismos.html" class="nav-item"><i class="ti ti-droplet"></i> Bautismos</a>
+      <a href="confirmaciones.html" class="nav-item"><i class="ti ti-flame"></i> Confirmaciones</a>
+      <a href="comuniones.html" class="nav-item"><i class="ti ti-bread"></i> Primeras Comuniones</a>
+      <a href="matrimonios.html" class="nav-item active"><i class="ti ti-rings"></i> Matrimonios</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar"><i class="ti ti-user" style="font-size:13px;"></i></div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="usuario-nombre">Usuario</div>
+          <div class="sidebar-user-role">Secretaria</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logout()"><i class="ti ti-logout"></i> Cerrar sesion</button>
+    </div>
+  </aside>
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-breadcrumb">Libros Sacramentales</span>
+      <span class="topbar-sep">/</span>
+      <span class="topbar-title">Matrimonios</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-date" id="fecha-hoy"></span>
+    </div>
+  </div>
+  <main class="main">
+    <div id="vista-lista">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h2>Libro de Matrimonios</h2>
+          <p>Registro y consulta de actas de matrimonio</p>
+        </div>
+        <button class="btn-gold" onclick="mostrarFormulario()"><i class="ti ti-plus"></i> Nuevo Registro</button>
+      </div>
+      <div class="card">
+        <div class="search-bar">
+          <div class="search-input-wrap">
+            <i class="ti ti-search"></i>
+            <input type="text" id="busqueda" placeholder="Buscar por nombre del esposo o esposa..." oninput="buscar()">
+          </div>
+        </div>
+        <div id="tabla-matrimonios"><div class="loading"><i class="ti ti-loader ti-spin"></i> Cargando registros...</div></div>
+      </div>
+    </div>
+    <div id="vista-formulario" style="display:none;">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h2>Nuevo Registro de Matrimonio</h2>
+          <p>Acta de matrimonio — Libro sacramental</p>
+        </div>
+        <button class="btn-secondary" onclick="mostrarLista()"><i class="ti ti-arrow-left"></i> Volver al libro</button>
+      </div>
+      <div class="form-steps">
+        <div class="step active" id="step-1"><div class="step-num">1</div><div class="step-label">El Esposo</div></div>
+        <div class="step-connector"></div>
+        <div class="step" id="step-2"><div class="step-num">2</div><div class="step-label">La Esposa</div></div>
+        <div class="step-connector"></div>
+        <div class="step" id="step-3"><div class="step-num">3</div><div class="step-label">Testigos</div></div>
+        <div class="step-connector"></div>
+        <div class="step" id="step-4"><div class="step-num">4</div><div class="step-label">Datos del Acta</div></div>
+      </div>
+      <div class="card">
+        <div id="alerta" class="alert"></div>
+        <div id="panel-1">
+          <div class="form-section">
+            <div class="form-section-header"><i class="ti ti-user"></i><div class="form-section-title">Datos del Esposo</div></div>
+            <div class="grid-2">
+              <div class="field field-required"><label>Nombres</label><input type="text" id="f-espnombres" placeholder="Nombres completos"></div>
+              <div class="field field-required"><label>Apellidos</label><input type="text" id="f-espapellidos" placeholder="Apellidos completos"></div>
+              <div class="field"><label>Fecha de Nacimiento</label><input type="date" id="f-espfechnac"></div>
+              <div class="field"><label>Lugar de Nacimiento</label><input type="text" id="f-esplugarnac" placeholder="Ciudad, Departamento"></div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-primary" onclick="irPaso(2)">Siguiente <i class="ti ti-arrow-right"></i></button>
+          </div>
+        </div>
+        <div id="panel-2" style="display:none;">
+          <div class="form-section">
+            <div class="form-section-header"><i class="ti ti-user"></i><div class="form-section-title">Datos de la Esposa</div></div>
+            <div class="grid-2">
+              <div class="field field-required"><label>Nombres</label><input type="text" id="f-espanombres" placeholder="Nombres completos"></div>
+              <div class="field field-required"><label>Apellidos</label><input type="text" id="f-espaapellidos" placeholder="Apellidos completos"></div>
+              <div class="field"><label>Fecha de Nacimiento</label><input type="date" id="f-espafechnac"></div>
+              <div class="field"><label>Lugar de Nacimiento</label><input type="text" id="f-espalugarnac" placeholder="Ciudad, Departamento"></div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-secondary" onclick="irPaso(1)"><i class="ti ti-arrow-left"></i> Anterior</button>
+            <button class="btn-primary" onclick="irPaso(3)">Siguiente <i class="ti ti-arrow-right"></i></button>
+          </div>
+        </div>
+        <div id="panel-3" style="display:none;">
+          <div class="form-section">
+            <div class="form-section-header"><i class="ti ti-users"></i><div class="form-section-title">Testigos del Matrimonio</div></div>
+            <div class="grid-2">
+              <div class="field"><label>Testigo 1</label><input type="text" id="f-testigo1" placeholder="Nombre completo"></div>
+              <div class="field"><label>Testigo 2</label><input type="text" id="f-testigo2" placeholder="Nombre completo"></div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-secondary" onclick="irPaso(2)"><i class="ti ti-arrow-left"></i> Anterior</button>
+            <button class="btn-primary" onclick="irPaso(4)">Siguiente <i class="ti ti-arrow-right"></i></button>
+          </div>
+        </div>
+        <div id="panel-4" style="display:none;">
+          <div class="form-section">
+            <div class="form-section-header"><i class="ti ti-book"></i><div class="form-section-title">Datos del Acta Eclesiastica</div></div>
+            <div class="grid-2">
+              <div class="field field-required"><label>Fecha del Matrimonio</label><input type="date" id="f-fecha"></div>
+              <div class="field"><label>Tipo de Matrimonio</label>
+                <select id="f-tipo"><option value="canonico">Canonico</option><option value="civil">Civil tambien</option></select>
+              </div>
+            </div>
+            <div class="grid-3" style="margin-top:1rem;">
+              <div class="field"><label>Libro N°</label><input type="text" id="f-libro" placeholder="Ej: 05"></div>
+              <div class="field"><label>Folio N°</label><input type="text" id="f-folio" placeholder="Ej: 123"></div>
+              <div class="field"><label>Partida N°</label><input type="text" id="f-partida" placeholder="Ej: 045"></div>
+            </div>
+            <div class="grid-2" style="margin-top:1rem;">
+              <div class="field"><label>Parroquia</label><input type="text" id="f-parroquia" placeholder="Nombre de la parroquia"></div>
+              <div class="field"><label>Municipio / Departamento</label><input type="text" id="f-lugar" placeholder="San Salvador, San Salvador"></div>
+            </div>
+            <div class="grid-1" style="margin-top:1rem;">
+              <div class="field"><label>Sacerdote Ministro</label><input type="text" id="f-ministro" placeholder="Nombre del sacerdote"></div>
+            </div>
+            <div class="grid-1" style="margin-top:1rem;">
+              <div class="field"><label>Observaciones</label><textarea id="f-notas" placeholder="Notas adicionales..."></textarea></div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-secondary" onclick="irPaso(3)"><i class="ti ti-arrow-left"></i> Anterior</button>
+            <button class="btn-secondary" onclick="limpiar()"><i class="ti ti-eraser"></i> Limpiar</button>
+            <button class="btn-gold" onclick="guardar()"><i class="ti ti-device-floppy"></i> Guardar Registro</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../src/js/constancia.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../src/js/config.js"></script>
+<script src="../src/js/auth.js"></script>
+<script src="../src/js/matrimonios.js"></script>
+<script>
+  document.getElementById('fecha-hoy').textContent = new Date().toLocaleDateString('es-SV',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  (async () => { await requireAuth(); await mostrarUsuario(); await cargarMatrimonios(); })();
+  function irPaso(n) {
+    for (let i = 1; i <= 4; i++) {
+      document.getElementById('panel-'+i).style.display = i===n?'block':'none';
+      const s = document.getElementById('step-'+i);
+      s.classList.remove('active','done');
+      if (i===n) s.classList.add('active');
+      else if (i<n) s.classList.add('done');
+    }
+  }
+</script>
+</body>
+</html>

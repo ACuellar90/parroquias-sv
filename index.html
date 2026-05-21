@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parroquias SV — Acceso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --vino: #6B1A2A; --vino-dark: #4A1020;
+      --dorado: #C9A84C; --crema: #F5F0E8;
+      --texto: #1C1410; --borde: rgba(107,26,42,0.15);
+      --font-display: 'Cormorant Garamond', serif;
+      --font-body: 'Jost', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body);
+      background: var(--crema);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      max-width: 860px;
+      width: 100%;
+      margin: 2rem;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(74,16,32,0.15);
+    }
+    .login-left {
+      background: var(--vino-dark);
+      padding: 3rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .login-left h1 {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 600;
+      color: var(--dorado);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+    .login-left p {
+      font-size: 14px;
+      color: rgba(245,240,232,0.6);
+      line-height: 1.7;
+    }
+    .login-left .cruz {
+      font-size: 48px;
+      color: rgba(201,168,76,0.3);
+      margin-bottom: 1.5rem;
+    }
+    .login-right {
+      background: white;
+      padding: 3rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .login-right h2 {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--vino-dark);
+      margin-bottom: 0.25rem;
+    }
+    .login-right p {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 2rem;
+    }
+    .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 1rem; }
+    .field label { font-size: 12px; font-weight: 500; color: #666; }
+    .field input {
+      padding: 10px 14px;
+      border: 1px solid var(--borde);
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .field input:focus {
+      border-color: var(--vino);
+      box-shadow: 0 0 0 3px rgba(107,26,42,0.08);
+    }
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      background: var(--vino);
+      color: var(--crema);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.15s;
+    }
+    .btn-login:hover { background: #8B2A3E; }
+    .alert-error {
+      padding: 10px 14px;
+      background: #FEF2F2;
+      color: #991B1B;
+      border: 1px solid #FECACA;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-left">
+      <div class="cruz">✝</div>
+      <h1>Registro Sacramental</h1>
+      <p>Sistema de gestión de sacramentos para parroquias. Registrá, consultá e imprimí constancias de bautismo, confirmación, primera comunión y matrimonio.</p>
+    </div>
+    <div class="login-right">
+      <h2>Bienvenido</h2>
+      <p>Ingresá con tus credenciales</p>
+      <div id="alerta-error" class="alert-error"></div>
+      <div class="field">
+        <label>Correo electrónico</label>
+        <input type="email" id="email" placeholder="secretaria@parroquia.com">
+      </div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="password" placeholder="••••••••">
+      </div>
+      <button class="btn-login" onclick="iniciarSesion()">Ingresar al sistema</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="src/js/config.js"></script>
+  <script>
+    async function iniciarSesion() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const alerta = document.getElementById('alerta-error');
+      alerta.style.display = 'none';
+
+      if (!email || !password) {
+        alerta.textContent = 'Ingresá tu correo y contraseña.';
+        alerta.style.display = 'block';
+        return;
+      }
+
+      const { error } = await db.auth.signInWithPassword({ email, password });
+      if (error) {
+        alerta.textContent = 'Credenciales incorrectas. Intentá de nuevo.';
+        alerta.style.display = 'block';
+      } else {
+        window.location.href = '/pages/dashboard.html';
+      }
+    }
+
+    // Enter para iniciar sesión
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') iniciarSesion();
+    });
+
+    // Si ya hay sesión activa, ir al dashboard
+    (async () => {
+      const { data: { session } } = await db.auth.getSession();
+      if (session) window.location.href = '/pages/dashboard.html';
+    })();
+  </script>
+</body>
+</html>

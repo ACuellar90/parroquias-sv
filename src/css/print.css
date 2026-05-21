@@ -1,0 +1,85 @@
+/* =============================================
+   ESTILOS DE IMPRESIÓN — Constancias
+   ============================================= */
+
+@media print {
+  body { background: white; font-family: 'Times New Roman', serif; }
+  .sidebar, .main > *:not(.constancia-wrap) { display: none !important; }
+  .constancia-wrap { display: block !important; margin: 0; padding: 0; }
+}
+
+.constancia-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2.5cm 2cm;
+  font-family: 'Times New Roman', Georgia, serif;
+  font-size: 13pt;
+  color: #1a1a1a;
+  line-height: 1.8;
+}
+
+.constancia-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #6B1A2A;
+}
+
+.constancia-header .parroquia-nombre {
+  font-size: 16pt;
+  font-weight: bold;
+  color: #6B1A2A;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.constancia-header .parroquia-direccion {
+  font-size: 11pt;
+  color: #555;
+  margin-top: 4px;
+}
+
+.constancia-titulo {
+  font-size: 20pt;
+  font-weight: bold;
+  text-align: center;
+  margin: 1.5rem 0 0.5rem;
+  color: #1a1a1a;
+}
+
+.constancia-partida {
+  text-align: center;
+  font-size: 11pt;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+.constancia-cuerpo {
+  text-align: justify;
+  margin-bottom: 2rem;
+}
+
+.constancia-cuerpo p {
+  margin-bottom: 0.75rem;
+}
+
+.constancia-firmas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-top: 4rem;
+  text-align: center;
+}
+
+.constancia-firma-linea {
+  border-top: 1px solid #333;
+  padding-top: 8px;
+  font-size: 11pt;
+}
+
+.constancia-fecha {
+  text-align: center;
+  font-size: 11pt;
+  color: #555;
+  margin-top: 2rem;
+}

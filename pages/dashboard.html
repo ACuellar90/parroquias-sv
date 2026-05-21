@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Parroquias SV</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="../src/css/main.css">
+</head>
+<body>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">✝</div>
+      <div class="sidebar-brand-text">
+        <strong>Parroquias SV</strong>
+        <span>Sistema Sacramental</span>
+      </div>
+    </div>
+    <div class="sidebar-parroquia">
+      <i class="ti ti-building-church"></i>
+      <span id="nombre-parroquia">Archivo Digital</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Principal</div>
+      <a href="dashboard.html" class="nav-item active"><i class="ti ti-layout-dashboard"></i> Panel de Control</a>
+      <a href="busqueda.html" class="nav-item"><i class="ti ti-search"></i> Busqueda Global</a>
+      <div class="nav-section">Libros Sacramentales</div>
+      <a href="bautismos.html" class="nav-item"><i class="ti ti-droplet"></i> Bautismos</a>
+      <a href="confirmaciones.html" class="nav-item"><i class="ti ti-flame"></i> Confirmaciones</a>
+      <a href="comuniones.html" class="nav-item"><i class="ti ti-bread"></i> Primeras Comuniones</a>
+      <a href="matrimonios.html" class="nav-item"><i class="ti ti-rings"></i> Matrimonios</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar"><i class="ti ti-user" style="font-size:13px;"></i></div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="usuario-nombre">Usuario</div>
+          <div class="sidebar-user-role">Secretaría</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logout()"><i class="ti ti-logout"></i> Cerrar sesion</button>
+    </div>
+  </aside>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-breadcrumb">Inicio</span>
+      <span class="topbar-sep">/</span>
+      <span class="topbar-title">Panel de Control</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-date" id="fecha-hoy"></span>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h2>Bienvenido/a</h2>
+        <p>Resumen general del sistema de registro sacramental</p>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="ti ti-droplet"></i></div>
+        <div class="stat-info">
+          <div class="stat-label">Bautismos</div>
+          <div class="stat-value" id="total-bautismos">—</div>
+          <div class="stat-sub">registros totales</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="ti ti-flame"></i></div>
+        <div class="stat-info">
+          <div class="stat-label">Confirmaciones</div>
+          <div class="stat-value" id="total-confirmaciones">—</div>
+          <div class="stat-sub">registros totales</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="ti ti-bread"></i></div>
+        <div class="stat-info">
+          <div class="stat-label">Primeras Comuniones</div>
+          <div class="stat-value" id="total-comuniones">—</div>
+          <div class="stat-sub">registros totales</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="ti ti-rings"></i></div>
+        <div class="stat-info">
+          <div class="stat-label">Matrimonios</div>
+          <div class="stat-value" id="total-matrimonios">—</div>
+          <div class="stat-sub">registros totales</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ultimos registros -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-list"></i> Ultimos registros de bautismo</div>
+        <a href="bautismos.html" class="btn-icon"><i class="ti ti-arrow-right"></i> Ver todos</a>
+      </div>
+      <div id="ultimos-registros"><div class="loading"><i class="ti ti-loader ti-spin"></i> Cargando...</div></div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../src/js/config.js"></script>
+<script src="../src/js/auth.js"></script>
+<script>
+  // Fecha
+  document.getElementById('fecha-hoy').textContent = new Date().toLocaleDateString('es-SV', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  (async () => {
+    await requireAuth();
+    await mostrarUsuario();
+
+    const tablas = ['bautismos','confirmaciones','primeras_comuniones','matrimonios'];
+    const ids    = ['total-bautismos','total-confirmaciones','total-comuniones','total-matrimonios'];
+    for (let i = 0; i < tablas.length; i++) {
+      const { count } = await db.from(tablas[i]).select('*', { count:'exact', head:true });
+      document.getElementById(ids[i]).textContent = count ?? 0;
+    }
+
+    const { data } = await db.from('bautismos')
+      .select('id,nombres,apellidos,fecha_bautismo,libro,folio,partida,ministro')
+      .order('created_at', { ascending: false }).limit(8);
+
+    const cont = document.getElementById('ultimos-registros');
+    if (!data || !data.length) {
+      cont.innerHTML = '<div class="empty-state"><i class="ti ti-notes"></i><p>No hay registros de bautismo aun.</p></div>';
+      return;
+    }
+    cont.innerHTML = `<table>
+      <thead><tr>
+        <th>#</th><th>Nombre completo</th><th>Fecha de bautismo</th>
+        <th>Libro</th><th>Folio</th><th>Partida</th><th>Ministro</th>
+      </tr></thead>
+      <tbody>
+        ${data.map((r,i) => `<tr>
+          <td class="muted">${i+1}</td>
+          <td><strong>${r.nombres} ${r.apellidos}</strong></td>
+          <td>${r.fecha_bautismo ? new Date(r.fecha_bautismo+'T12:00:00').toLocaleDateString('es-SV') : '—'}</td>
+          <td class="muted">${r.libro||'—'}</td>
+          <td class="muted">${r.folio||'—'}</td>
+          <td><span class="badge badge-bautismo">${r.partida||'—'}</span></td>
+          <td class="muted">${r.ministro||'—'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  })();
+</script>
+</body>
+</html>
