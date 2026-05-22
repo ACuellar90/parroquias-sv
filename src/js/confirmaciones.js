@@ -1,4 +1,5 @@
 let todasLasConfirmaciones = [];
+let editandoId = null;
 
 async function cargarConfirmaciones() {
   const { data, error } = await db.from('confirmaciones').select('*').order('created_at', { ascending: false });
@@ -24,7 +25,10 @@ function renderTabla(registros) {
         <td class="muted">${r.libro||'—'}</td>
         <td><span class="badge badge-confirmacion">${r.partida||'—'}</span></td>
         <td class="muted">${r.ministro||'—'}</td>
-        <td><button onclick="imprimirConstancia(${JSON.stringify(r).replace(/"/g,'&quot;')})" class="btn-icon"><i class="ti ti-printer"></i> Constancia</button></td>
+        <td style="display:flex; gap:6px; justify-content:flex-end;">
+          <button onclick="editarRegistro('${r.id}')" class="btn-icon"><i class="ti ti-pencil"></i> Editar</button>
+          <button onclick="imprimirConstancia(${JSON.stringify(r).replace(/"/g,'&quot;')})" class="btn-icon"><i class="ti ti-printer"></i> Constancia</button>
+        </td>
       </tr>`).join('')}
     </tbody>
   </table>`;
@@ -36,13 +40,44 @@ function buscar() {
 }
 
 function mostrarFormulario() {
+  editandoId = null;
+  limpiar();
+  document.querySelector('#vista-formulario h2').textContent = 'Nuevo Registro de Confirmacion';
   document.getElementById('vista-lista').style.display = 'none';
   document.getElementById('vista-formulario').style.display = 'block';
+  irPaso(1);
 }
 
 function mostrarLista() {
   document.getElementById('vista-formulario').style.display = 'none';
   document.getElementById('vista-lista').style.display = 'block';
+  editandoId = null;
+}
+
+function editarRegistro(id) {
+  const r = todasLasConfirmaciones.find(x => x.id === id);
+  if (!r) return;
+  editandoId = id;
+  document.querySelector('#vista-formulario h2').textContent = 'Editar Registro de Confirmacion';
+  document.getElementById('vista-lista').style.display = 'none';
+  document.getElementById('vista-formulario').style.display = 'block';
+  document.getElementById('f-nombres').value     = r.nombres || '';
+  document.getElementById('f-apellidos').value   = r.apellidos || '';
+  document.getElementById('f-fechnac').value     = r.fecha_nacimiento || '';
+  document.getElementById('f-lugarnac').value    = r.lugar_nacimiento || '';
+  document.getElementById('f-sexo').value        = r.sexo || '';
+  document.getElementById('f-fechconf').value    = r.fecha_confirmacion || '';
+  document.getElementById('f-nombresanto').value = r.nombre_confirmacion || '';
+  document.getElementById('f-padrino').value     = r.padrino_nombre || '';
+  document.getElementById('f-madrina').value     = r.madrina_nombre || '';
+  document.getElementById('f-libro').value       = r.libro || '';
+  document.getElementById('f-folio').value       = r.folio || '';
+  document.getElementById('f-partida').value     = r.partida || '';
+  document.getElementById('f-parroquia').value   = r.parroquia || '';
+  document.getElementById('f-lugar').value       = r.municipio || '';
+  document.getElementById('f-ministro').value    = r.ministro || '';
+  document.getElementById('f-notas').value       = r.notas || '';
+  irPaso(1);
 }
 
 function limpiar() {
@@ -65,7 +100,7 @@ async function guardar() {
     return;
   }
 
-  const { error } = await db.from('confirmaciones').insert([{
+  const registro = {
     nombres, apellidos,
     fecha_nacimiento:    document.getElementById('f-fechnac').value || null,
     lugar_nacimiento:    document.getElementById('f-lugarnac').value.trim() || null,
@@ -81,7 +116,14 @@ async function guardar() {
     municipio:           document.getElementById('f-lugar').value.trim() || null,
     ministro:            document.getElementById('f-ministro').value.trim() || null,
     notas:               document.getElementById('f-notas').value.trim() || null,
-  }]);
+  };
+
+  let error;
+  if (editandoId) {
+    ({ error } = await db.from('confirmaciones').update(registro).eq('id', editandoId));
+  } else {
+    ({ error } = await db.from('confirmaciones').insert([registro]));
+  }
 
   if (error) {
     alerta.textContent = 'Error al guardar: ' + error.message;
@@ -90,10 +132,11 @@ async function guardar() {
     return;
   }
 
-  alerta.textContent = 'Registro guardado correctamente.';
+  alerta.textContent = editandoId ? 'Registro actualizado correctamente.' : 'Registro guardado correctamente.';
   alerta.className = 'alert alert-success';
   alerta.style.display = 'flex';
   limpiar();
+  editandoId = null;
   await cargarConfirmaciones();
   setTimeout(() => mostrarLista(), 1200);
 }

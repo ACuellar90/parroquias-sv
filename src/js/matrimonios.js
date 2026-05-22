@@ -1,4 +1,5 @@
 let todosLosMatrimonios = [];
+let editandoId = null;
 
 async function cargarMatrimonios() {
   const { data, error } = await db.from('matrimonios').select('*').order('created_at', { ascending: false });
@@ -24,7 +25,10 @@ function renderTabla(registros) {
         <td class="muted">${r.libro||'—'}</td>
         <td><span class="badge badge-matrimonio">${r.partida||'—'}</span></td>
         <td class="muted">${r.ministro||'—'}</td>
-        <td><button onclick="imprimirConstancia(${JSON.stringify(r).replace(/"/g,'&quot;')})" class="btn-icon"><i class="ti ti-printer"></i> Constancia</button></td>
+        <td style="display:flex; gap:6px; justify-content:flex-end;">
+          <button onclick="editarRegistro('${r.id}')" class="btn-icon"><i class="ti ti-pencil"></i> Editar</button>
+          <button onclick="imprimirConstancia(${JSON.stringify(r).replace(/"/g,'&quot;')})" class="btn-icon"><i class="ti ti-printer"></i> Constancia</button>
+        </td>
       </tr>`).join('')}
     </tbody>
   </table>`;
@@ -38,13 +42,47 @@ function buscar() {
 }
 
 function mostrarFormulario() {
+  editandoId = null;
+  limpiar();
+  document.querySelector('#vista-formulario h2').textContent = 'Nuevo Registro de Matrimonio';
   document.getElementById('vista-lista').style.display = 'none';
   document.getElementById('vista-formulario').style.display = 'block';
+  irPaso(1);
 }
 
 function mostrarLista() {
   document.getElementById('vista-formulario').style.display = 'none';
   document.getElementById('vista-lista').style.display = 'block';
+  editandoId = null;
+}
+
+function editarRegistro(id) {
+  const r = todosLosMatrimonios.find(x => x.id === id);
+  if (!r) return;
+  editandoId = id;
+  document.querySelector('#vista-formulario h2').textContent = 'Editar Registro de Matrimonio';
+  document.getElementById('vista-lista').style.display = 'none';
+  document.getElementById('vista-formulario').style.display = 'block';
+  document.getElementById('f-espnombres').value    = r.esposo_nombres || '';
+  document.getElementById('f-espapellidos').value  = r.esposo_apellidos || '';
+  document.getElementById('f-espfechnac').value    = r.esposo_fecha_nacimiento || '';
+  document.getElementById('f-esplugarnac').value   = r.esposo_lugar_nacimiento || '';
+  document.getElementById('f-espanombres').value   = r.esposa_nombres || '';
+  document.getElementById('f-espaapellidos').value = r.esposa_apellidos || '';
+  document.getElementById('f-espafechnac').value   = r.esposa_fecha_nacimiento || '';
+  document.getElementById('f-espalugarnac').value  = r.esposa_lugar_nacimiento || '';
+  document.getElementById('f-testigo1').value      = r.testigo1_nombre || '';
+  document.getElementById('f-testigo2').value      = r.testigo2_nombre || '';
+  document.getElementById('f-fecha').value         = r.fecha_matrimonio || '';
+  document.getElementById('f-tipo').value          = r.tipo || 'canonico';
+  document.getElementById('f-libro').value         = r.libro || '';
+  document.getElementById('f-folio').value         = r.folio || '';
+  document.getElementById('f-partida').value       = r.partida || '';
+  document.getElementById('f-parroquia').value     = r.parroquia || '';
+  document.getElementById('f-lugar').value         = r.municipio || '';
+  document.getElementById('f-ministro').value      = r.ministro || '';
+  document.getElementById('f-notas').value         = r.notas || '';
+  irPaso(1);
 }
 
 function limpiar() {
@@ -71,7 +109,7 @@ async function guardar() {
     return;
   }
 
-  const { error } = await db.from('matrimonios').insert([{
+  const registro = {
     esposo_nombres:          espnombres,
     esposo_apellidos:        espapellidos,
     esposa_nombres:          espanombres,
@@ -91,7 +129,14 @@ async function guardar() {
     municipio:               document.getElementById('f-lugar').value.trim() || null,
     ministro:                document.getElementById('f-ministro').value.trim() || null,
     notas:                   document.getElementById('f-notas').value.trim() || null,
-  }]);
+  };
+
+  let error;
+  if (editandoId) {
+    ({ error } = await db.from('matrimonios').update(registro).eq('id', editandoId));
+  } else {
+    ({ error } = await db.from('matrimonios').insert([registro]));
+  }
 
   if (error) {
     alerta.textContent = 'Error al guardar: ' + error.message;
@@ -100,10 +145,11 @@ async function guardar() {
     return;
   }
 
-  alerta.textContent = 'Registro guardado correctamente.';
+  alerta.textContent = editandoId ? 'Registro actualizado correctamente.' : 'Registro guardado correctamente.';
   alerta.className = 'alert alert-success';
   alerta.style.display = 'flex';
   limpiar();
+  editandoId = null;
   await cargarMatrimonios();
   setTimeout(() => mostrarLista(), 1200);
 }

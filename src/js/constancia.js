@@ -1,5 +1,5 @@
 // ============================================================
-// CONSTANCIAS — Genera PDF directo sin diálogo de impresión
+// CONSTANCIAS — Formato oficial parroquial
 // ============================================================
 
 function numeroALetras(n) {
@@ -113,7 +113,7 @@ function mostrarDialogoImpresion(r, tipo) {
         </button>
         <button onclick="generarConstancia()"
           style="padding:9px 20px; background:#C9A84C; border:none; border-radius:6px; font-size:14px; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; color:#0D1B3E;">
-          Generar PDF
+          Imprimir
         </button>
       </div>
     </div>
@@ -149,7 +149,7 @@ function generarConstancia() {
   if (tipo === 'bautismo') {
     titulo  = 'FE DE BAUTISMO.';
     nombre  = `${r.nombres} ${r.apellidos}`.toUpperCase();
-    intro   = `El infrascrito Párroco de ${r.parroquia||'___'}, CERTIFICA QUE:\nEn el libro de bautismos N.° ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la partida que literalmente dice:`;
+    intro   = `El infrascrito Párroco de la parroquia ${r.parroquia||'___'}, CERTIFICA QUE:\nEn el libro de bautismos N.° ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la que literalmente dice:`;
     cuerpo  = `En ${lugar} a ${fechaALetras(r.fecha_bautismo)}, el Padre: ${r.ministro||'___'}, bautizó solemnemente a: ${nombre} que nació el día ${fechaALetras(r.fecha_nacimiento)}, ${r.sexo==='Femenino'?'hija':'hijo'} legítimo/a de: ${r.padre_nombre||'___'} y de ${r.madre_nombre||'___'}.${r.madrina_nombre?' Madrina: '+r.madrina_nombre+'.':''}${r.padrino_nombre?' Padrino: '+r.padrino_nombre+'.':''}`;
     rubrica = `Rúbrica,                              ${r.ministro||'___'}.`;
     margen  = `Al margen se lee N.° ${r.partida||'__'}, ${nombre} H.L.`;
@@ -158,22 +158,22 @@ function generarConstancia() {
     titulo  = 'FE DE CONFIRMACION.';
     nombre  = `${r.nombres} ${r.apellidos}`.toUpperCase();
     intro   = `El infrascrito Párroco de ${r.parroquia||'___'}, CERTIFICA QUE:\nEn el libro de confirmaciones N.° ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la partida que literalmente dice:`;
-    cuerpo  = `En ${lugar} a ${fechaALetras(r.fecha_confirmacion)}, el Ministro: ${r.ministro||'___'}, confirmó a: ${nombre} que nació el día ${fechaALetras(r.fecha_nacimiento)}.${r.nombre_confirmacion?' Tomó el nombre de confirmación: '+r.nombre_confirmacion+'.':''}${r.madrina_nombre?' Madrina: '+r.madrina_nombre+'.':''}${r.padrino_nombre?' Padrino: '+r.padrino_nombre+'.':''}`;
+    cuerpo  = `En ${lugar} a ${fechaALetras(r.fecha_confirmacion)}, el padre: ${r.ministro||'___'}, administró solemnemente el sacramento de la confirmación a: ${nombre} que nació el día ${fechaALetras(r.fecha_nacimiento)}.${r.nombre_confirmacion?' Tomó el nombre de confirmación: '+r.nombre_confirmacion+'.':''}${r.madrina_nombre?' Madrina: '+r.madrina_nombre+'.':''}${r.padrino_nombre?' Padrino: '+r.padrino_nombre+'.':''}`;
     rubrica = `Rúbrica,                              ${r.ministro||'___'}.`;
     margen  = `Al margen se lee N.° ${r.partida||'__'}, ${nombre} H.L.`;
 
   } else if (tipo === 'comunion') {
-    titulo  = 'FE DE PRIMERA COMUNION.';
+    titulo  = 'CONSTANCIA PRIMERA COMUNION.';
     nombre  = `${r.nombres} ${r.apellidos}`.toUpperCase();
     intro   = `El infrascrito Párroco de ${r.parroquia||'___'}, CERTIFICA QUE:\nEn el libro de primeras comuniones N.° ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la partida que literalmente dice:`;
-    cuerpo  = `En ${lugar} a ${fechaALetras(r.fecha_comunion)}, el Padre: ${r.ministro||'___'}, administró por primera vez la Sagrada Eucaristía a: ${nombre} que nació el día ${fechaALetras(r.fecha_nacimiento)}.`;
+    cuerpo  = `En ${lugar} a ${fechaALetras(r.fecha_comunion)}, el Padre: ${r.ministro||'___'}, administró por primera vez el sacramento de la comunión a: ${nombre} que nació el día ${fechaALetras(r.fecha_nacimiento)}.`;
     rubrica = `Rúbrica,                              ${r.ministro||'___'}.`;
     margen  = `Al margen se lee N.° ${r.partida||'__'}, ${nombre} H.L.`;
 
   } else if (tipo === 'matrimonio') {
     titulo  = 'FE DE MATRIMONIO.';
     nombre  = `${r.esposo_nombres} ${r.esposo_apellidos} y ${r.esposa_nombres} ${r.esposa_apellidos}`.toUpperCase();
-    intro   = `El infrascrito Párroco de ${r.parroquia||'___'}, CERTIFICA QUE:\nEn el libro de matrimonios N.° ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la partida que literalmente dice:`;
+    intro   = `El infrascrito Párroco de la parroquia ${r.parroquia||'___'}, CERTIFICA QUE:\nEn el libro de matrimonios N.° ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la partida que literalmente dice:`;
     cuerpo  = `En ${lugar} a ${fechaALetras(r.fecha_matrimonio)}, el Padre: ${r.ministro||'___'}, asistió al matrimonio ${r.tipo==='civil'?'canónico y civil':'canónico'} de: ${r.esposo_nombres.toUpperCase()} ${r.esposo_apellidos.toUpperCase()}${r.esposo_lugar_nacimiento?', originario de '+r.esposo_lugar_nacimiento:''}, y ${r.esposa_nombres.toUpperCase()} ${r.esposa_apellidos.toUpperCase()}${r.esposa_lugar_nacimiento?', originaria de '+r.esposa_lugar_nacimiento:''}. Testigos: ${r.testigo1_nombre||'___'} y ${r.testigo2_nombre||'___'}.`;
     rubrica = `Rúbrica,                              ${r.ministro||'___'}.`;
     margen  = `Al margen se lee N.° ${r.partida||'__'}, ${nombre}.`;
@@ -181,78 +181,58 @@ function generarConstancia() {
 
   const cierre = `Es conforme a su original con la cual se confrontó, y para los efectos de ${efectos}, se extiende la presente en ${lugar}, a ${hoyTexto}.`;
 
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: 'mm', format: [216, 356] });
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+  <title>.</title>
+  <style>
+    @page {
+      size: 216mm 356mm;
+      margin: 10cm 2.8cm 2.5cm 2.5cm;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 12pt;
+      color: #000;
+      line-height: 1.9;
+    }
+    .titulo {
+      text-align: center;
+      font-size: 13pt;
+      font-weight: bold;
+      text-decoration: underline;
+      margin-bottom: 1.5rem;
+    }
+    .intro { margin-bottom: 1.5rem; text-align: justify; }
+    .cuerpo { text-align: justify; margin-bottom: 1.5rem; }
+    .rubrica { margin-top: 1.5rem; margin-bottom: 1.5rem; }
+    .margen { margin-bottom: 1.5rem; font-weight: bold; }
+    .cierre { text-align: justify; }
+  </style></head><body>
+  <div class="titulo">${titulo}</div>
+  <div class="intro">${intro.replace(/\n/g,'<br>')}</div>
+  <div class="cuerpo">${cuerpo}</div>
+  <div class="rubrica">${rubrica}</div>
+  <div class="margen">
+    ${margen}
+    ${anotaciones ? '<p style="font-weight:normal;font-style:italic;margin-top:0.5rem;">'+anotaciones+'</p>' : ''}
+  </div>
+  <div class="cierre">${cierre}</div>
+  </body></html>`;
 
-  const margenIzq  = 25;
-  const margenDer  = 25;
-  const anchoTexto = 216 - margenIzq - margenDer;
-  let y            = 100;
-  const lh         = 7;
+  const prevFrame = document.getElementById('frame-impresion');
+  if (prevFrame) prevFrame.remove();
 
-  // Titulo centrado y subrayado
-  doc.setFont('times', 'bold');
-  doc.setFontSize(13);
-  const tituloLines = doc.splitTextToSize(titulo, anchoTexto);
-  tituloLines.forEach(line => {
-    const xCenter = 216 / 2;
-    doc.text(line, xCenter, y, { align: 'center' });
-    const lineWidth = doc.getTextWidth(line);
-    doc.line(xCenter - lineWidth/2, y+1, xCenter + lineWidth/2, y+1);
-    y += lh;
-  });
-  y += 5;
+  const iframe = document.createElement('iframe');
+  iframe.id = 'frame-impresion';
+  iframe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;border:none;visibility:hidden;';
+  document.body.appendChild(iframe);
 
-  // Intro
-  doc.setFont('times', 'normal');
-  doc.setFontSize(12);
-  const introLines = doc.splitTextToSize(intro, anchoTexto);
-  introLines.forEach(line => {
-    doc.text(line, margenIzq, y);
-    y += lh;
-  });
-  y += 5;
+  iframe.contentDocument.open();
+  iframe.contentDocument.write(html);
+  iframe.contentDocument.close();
 
-  // Cuerpo
-  const cuerpoLines = doc.splitTextToSize(cuerpo, anchoTexto);
-  cuerpoLines.forEach(line => {
-    doc.text(line, margenIzq, y);
-    y += lh;
-  });
-  y += 5;
-
-  // Rubrica
-  doc.text(rubrica, margenIzq, y);
-  y += lh * 2;
-
-  // Al margen — negrita
-  doc.setFont('times', 'bold');
-  const margenLines = doc.splitTextToSize(margen, anchoTexto);
-  margenLines.forEach(line => {
-    doc.text(line, margenIzq, y);
-    y += lh;
-  });
-  y += 4;
-
-  // Anotaciones
-  if (anotaciones) {
-    doc.setFont('times', 'italic');
-    const anotLines = doc.splitTextToSize(anotaciones, anchoTexto);
-    anotLines.forEach(line => {
-      doc.text(line, margenIzq, y);
-      y += lh;
-    });
-    y += 4;
-  }
-
-  // Cierre
-  doc.setFont('times', 'normal');
-  const cierreLines = doc.splitTextToSize(cierre, anchoTexto);
-  cierreLines.forEach(line => {
-    doc.text(line, margenIzq, y);
-    y += lh;
-  });
-
-  const nombreArchivo = `${titulo.replace(/\./g,'').replace(/ /g,'_')}_${(r.nombres||r.esposo_nombres||'').replace(/ /g,'_')}.pdf`;
-  doc.save(nombreArchivo);
+  iframe.onload = () => {
+    iframe.contentWindow.focus();
+    iframe.contentWindow.print();
+  };
 }

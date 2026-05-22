@@ -1,11 +1,11 @@
 let todosLosBautismos = [];
+let editandoId = null;
 
 async function cargarBautismos() {
   const { data, error } = await db
     .from('bautismos')
     .select('*')
     .order('created_at', { ascending: false });
-
   if (error) { console.error(error); return; }
   todosLosBautismos = data || [];
   renderTabla(todosLosBautismos);
@@ -14,26 +14,26 @@ async function cargarBautismos() {
 function renderTabla(registros) {
   const cont = document.getElementById('tabla-bautismos');
   if (!registros.length) {
-    cont.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--texto-muted);font-size:14px;">No hay registros de bautismo aún.</p>';
+    cont.innerHTML = '<div class="empty-state"><i class="ti ti-notes"></i><p>No hay registros de bautismo aun.</p></div>';
     return;
   }
   cont.innerHTML = `<table>
     <thead><tr>
-      <th>Nombre</th><th>Fecha bautismo</th><th>Libro</th><th>Folio</th><th>Partida</th><th>Ministro</th><th></th>
+      <th>#</th><th>Nombre completo</th><th>Fecha de bautismo</th>
+      <th>Libro</th><th>Folio</th><th>Partida</th><th>Ministro</th><th></th>
     </tr></thead>
     <tbody>
-      ${registros.map(r => `<tr>
+      ${registros.map((r,i) => `<tr>
+        <td class="muted">${i+1}</td>
         <td><strong>${r.nombres} ${r.apellidos}</strong></td>
-        <td>${r.fecha_bautismo ? new Date(r.fecha_bautismo + 'T12:00:00').toLocaleDateString('es-SV') : '—'}</td>
-        <td>${r.libro || '—'}</td>
-        <td>${r.folio || '—'}</td>
-        <td>${r.partida || '—'}</td>
-        <td>${r.ministro || '—'}</td>
-        <td style="text-align:right;">
-          <button onclick="imprimirConstancia(${JSON.stringify(r).replace(/"/g,'&quot;')})"
-            style="padding:5px 12px;font-size:12px;background:transparent;border:1px solid var(--borde);border-radius:6px;cursor:pointer;color:var(--texto-muted);font-family:var(--font-body);">
-            <i class="ti ti-printer"></i> Constancia
-          </button>
+        <td>${r.fecha_bautismo ? new Date(r.fecha_bautismo+'T12:00:00').toLocaleDateString('es-SV') : '—'}</td>
+        <td class="muted">${r.libro||'—'}</td>
+        <td class="muted">${r.folio||'—'}</td>
+        <td><span class="badge badge-bautismo">${r.partida||'—'}</span></td>
+        <td class="muted">${r.ministro||'—'}</td>
+        <td style="display:flex; gap:6px; justify-content:flex-end;">
+          <button onclick="editarRegistro('${r.id}')" class="btn-icon"><i class="ti ti-pencil"></i> Editar</button>
+          <button onclick="imprimirConstancia(${JSON.stringify(r).replace(/"/g,'&quot;')})" class="btn-icon"><i class="ti ti-printer"></i> Constancia</button>
         </td>
       </tr>`).join('')}
     </tbody>
@@ -42,20 +42,55 @@ function renderTabla(registros) {
 
 function buscar() {
   const q = document.getElementById('busqueda').value.toLowerCase();
-  const filtrados = todosLosBautismos.filter(r =>
-    (r.nombres + ' ' + r.apellidos).toLowerCase().includes(q)
-  );
-  renderTabla(filtrados);
+  renderTabla(todosLosBautismos.filter(r =>
+    (r.nombres+' '+r.apellidos).toLowerCase().includes(q)
+  ));
 }
 
 function mostrarFormulario() {
+  editandoId = null;
+  limpiar();
+  document.querySelector('#vista-formulario h2').textContent = 'Nuevo Registro de Bautismo';
   document.getElementById('vista-lista').style.display = 'none';
   document.getElementById('vista-formulario').style.display = 'block';
+  irPaso(1);
 }
 
 function mostrarLista() {
   document.getElementById('vista-formulario').style.display = 'none';
   document.getElementById('vista-lista').style.display = 'block';
+  editandoId = null;
+}
+
+function editarRegistro(id) {
+  const r = todosLosBautismos.find(x => x.id === id);
+  if (!r) return;
+  editandoId = id;
+
+  document.querySelector('#vista-formulario h2').textContent = 'Editar Registro de Bautismo';
+  document.getElementById('vista-lista').style.display = 'none';
+  document.getElementById('vista-formulario').style.display = 'block';
+
+  // Cargar datos en el formulario
+  document.getElementById('f-nombres').value   = r.nombres || '';
+  document.getElementById('f-apellidos').value = r.apellidos || '';
+  document.getElementById('f-fechnac').value   = r.fecha_nacimiento || '';
+  document.getElementById('f-lugarnac').value  = r.lugar_nacimiento || '';
+  document.getElementById('f-sexo').value      = r.sexo || '';
+  document.getElementById('f-fechbaut').value  = r.fecha_bautismo || '';
+  document.getElementById('f-libro').value     = r.libro || '';
+  document.getElementById('f-folio').value     = r.folio || '';
+  document.getElementById('f-partida').value   = r.partida || '';
+  document.getElementById('f-parroquia').value = r.parroquia || '';
+  document.getElementById('f-lugar').value     = r.municipio || '';
+  document.getElementById('f-ministro').value  = r.ministro || '';
+  document.getElementById('f-padre').value     = r.padre_nombre || '';
+  document.getElementById('f-madre').value     = r.madre_nombre || '';
+  document.getElementById('f-padrino').value   = r.padrino_nombre || '';
+  document.getElementById('f-madrina').value   = r.madrina_nombre || '';
+  document.getElementById('f-notas').value     = r.notas || '';
+
+  irPaso(1);
 }
 
 function limpiar() {
@@ -76,7 +111,7 @@ async function guardar() {
   if (!nombres || !apellidos || !fechbaut) {
     alerta.textContent = 'Nombres, apellidos y fecha de bautismo son obligatorios.';
     alerta.className = 'alert alert-error';
-    alerta.style.display = 'block';
+    alerta.style.display = 'flex';
     return;
   }
 
@@ -100,18 +135,25 @@ async function guardar() {
     notas:             document.getElementById('f-notas').value.trim() || null,
   };
 
-  const { error } = await db.from('bautismos').insert([registro]);
+  let error;
+  if (editandoId) {
+    ({ error } = await db.from('bautismos').update(registro).eq('id', editandoId));
+  } else {
+    ({ error } = await db.from('bautismos').insert([registro]));
+  }
+
   if (error) {
     alerta.textContent = 'Error al guardar: ' + error.message;
     alerta.className = 'alert alert-error';
-    alerta.style.display = 'block';
+    alerta.style.display = 'flex';
     return;
   }
 
-  alerta.textContent = 'Registro guardado correctamente.';
+  alerta.textContent = editandoId ? 'Registro actualizado correctamente.' : 'Registro guardado correctamente.';
   alerta.className = 'alert alert-success';
-  alerta.style.display = 'block';
+  alerta.style.display = 'flex';
   limpiar();
+  editandoId = null;
   await cargarBautismos();
   setTimeout(() => mostrarLista(), 1200);
 }
