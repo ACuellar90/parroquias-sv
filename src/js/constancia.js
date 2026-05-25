@@ -149,12 +149,11 @@ async function generarConstancia() {
 
   document.getElementById('dialogo-impresion').remove();
 
-  const config = await cargarConfiguracion();
-
-  const hoyObj   = new Date();
+  const config  = await cargarConfiguracion();
+  const hoyObj  = new Date();
   const hoyTexto = `${diaALetras(hoyObj.getDate())} días del mes de ${mesALetras(hoyObj.getMonth()+1)} del año ${numeroALetras(hoyObj.getFullYear())}`;
-  const lugar    = config.parroquia_municipio || r.municipio || r.parroquia || '___';
-  const parroquia = config.parroquia_nombre || r.parroquia || '___';
+  const lugar   = config.parroquia_municipio || r.municipio || r.parroquia || '___';
+  const parroquia = config.parroquia_nombre  || r.parroquia || '___';
 
   const titulos = {
     bautismo:     'FE DE BAUTISMO.',
@@ -167,43 +166,48 @@ async function generarConstancia() {
 
   if (tipo === 'bautismo') {
     nombre  = `${r.nombres} ${r.apellidos}`.toUpperCase();
-    const fraseInicio = config.b_frase_inicio  || 'El infrascrito Párroco de';
-    const fraseLibro  = config.b_frase_libro   || 'En el libro de bautismos N.°';
-    const verbo       = config.b_verbo         || 'bautizó solemnemente a';
-    const frasePadres = config.b_frase_padres  || 'hijo legítimo/a de';
-    intro   = `${fraseInicio} ${parroquia}, CERTIFICA QUE:\n${fraseLibro} ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la partida que literalmente dice:`;
-    cuerpo  = `En ${lugar} a ${fechaALetras(r.fecha_bautismo)}, el Padre: ${r.ministro||'___'}, ${verbo}: ${nombre} que nació el día ${fechaALetras(r.fecha_nacimiento)}, ${frasePadres}: ${r.padre_nombre||'___'} y de ${r.madre_nombre||'___'}.${r.madrina_nombre?' Madrina: '+r.madrina_nombre+'.':''}${r.padrino_nombre?' Padrino: '+r.padrino_nombre+'.':''}`;
+    const fraseInicio = config.b_frase_inicio || 'El infrascrito Párroco de';
+    const fraseLibro  = config.b_frase_libro  || 'En el libro de bautismos';
+    const verbo       = config.b_verbo        || 'bautizó solemnemente a';
+    const frasePadres = config.b_frase_padres || 'hijo legítimo/a de';
+    const filiacion   = r.filiacion || 'H.L.';
+    const hijoHija    = filiacion === 'H.L.'
+      ? (r.sexo === 'Femenino' ? 'hija legítima' : 'hijo legítimo')
+      : (r.sexo === 'Femenino' ? 'hija natural'  : 'hijo natural');
+
+    intro  = `${fraseInicio} ${parroquia}, CERTIFICA QUE:\n${fraseLibro} N.° ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la partida que literalmente dice:`;
+    cuerpo = `En ${lugar} a ${fechaALetras(r.fecha_bautismo)}, el Padre: ${r.ministro||'___'}, ${verbo}: ${nombre} que nació el día ${fechaALetras(r.fecha_nacimiento)}, ${hijoHija} de: ${r.padre_nombre||'___'} y de ${r.madre_nombre||'___'}.${r.madrina_nombre?' Madrina: '+r.madrina_nombre+'.':''}${r.padrino_nombre?' Padrino: '+r.padrino_nombre+'.':''}`;
     rubrica = `Rúbrica,                              ${r.ministro||'___'}.`;
-    margen  = `Al margen se lee N.° ${r.partida||'__'}, ${nombre} H.L.`;
+    margen  = `Al margen se lee N.° ${r.partida||'__'}, ${nombre} ${filiacion}.`;
 
   } else if (tipo === 'confirmacion') {
     nombre  = `${r.nombres} ${r.apellidos}`.toUpperCase();
     const fraseInicio = config.c2_frase_inicio || 'El infrascrito Párroco de';
-    const fraseLibro  = config.c2_frase_libro  || 'En el libro de confirmaciones N.°';
+    const fraseLibro  = config.c2_frase_libro  || 'En el libro de confirmaciones';
     const verbo       = config.c2_verbo        || 'confirmó a';
-    intro   = `${fraseInicio} ${parroquia}, CERTIFICA QUE:\n${fraseLibro} ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la partida que literalmente dice:`;
-    cuerpo  = `En ${lugar} a ${fechaALetras(r.fecha_confirmacion)}, el Ministro: ${r.ministro||'___'}, ${verbo}: ${nombre} que nació el día ${fechaALetras(r.fecha_nacimiento)}.${r.nombre_confirmacion?' Tomó el nombre de confirmación: '+r.nombre_confirmacion+'.':''}${r.madrina_nombre?' Madrina: '+r.madrina_nombre+'.':''}${r.padrino_nombre?' Padrino: '+r.padrino_nombre+'.':''}`;
+    intro  = `${fraseInicio} ${parroquia}, CERTIFICA QUE:\n${fraseLibro} N.° ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la partida que literalmente dice:`;
+    cuerpo = `En ${lugar} a ${fechaALetras(r.fecha_confirmacion)}, el Ministro: ${r.ministro||'___'}, ${verbo}: ${nombre} que nació el día ${fechaALetras(r.fecha_nacimiento)}.${r.nombre_confirmacion?' Tomó el nombre de confirmación: '+r.nombre_confirmacion+'.':''}${r.madrina_nombre?' Madrina: '+r.madrina_nombre+'.':''}${r.padrino_nombre?' Padrino: '+r.padrino_nombre+'.':''}`;
     rubrica = `Rúbrica,                              ${r.ministro||'___'}.`;
     margen  = `Al margen se lee N.° ${r.partida||'__'}, ${nombre} H.L.`;
 
   } else if (tipo === 'comunion') {
     nombre  = `${r.nombres} ${r.apellidos}`.toUpperCase();
     const fraseInicio = config.co_frase_inicio || 'El infrascrito Párroco de';
-    const fraseLibro  = config.co_frase_libro  || 'En el libro de primeras comuniones N.°';
+    const fraseLibro  = config.co_frase_libro  || 'En el libro de primeras comuniones';
     const verbo       = config.co_verbo        || 'administró por primera vez la Sagrada Eucaristía a';
-    intro   = `${fraseInicio} ${parroquia}, CERTIFICA QUE:\n${fraseLibro} ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la partida que literalmente dice:`;
-    cuerpo  = `En ${lugar} a ${fechaALetras(r.fecha_comunion)}, el Padre: ${r.ministro||'___'}, ${verbo}: ${nombre} que nació el día ${fechaALetras(r.fecha_nacimiento)}.`;
+    intro  = `${fraseInicio} ${parroquia}, CERTIFICA QUE:\n${fraseLibro} N.° ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la partida que literalmente dice:`;
+    cuerpo = `En ${lugar} a ${fechaALetras(r.fecha_comunion)}, el Padre: ${r.ministro||'___'}, ${verbo}: ${nombre} que nació el día ${fechaALetras(r.fecha_nacimiento)}.`;
     rubrica = `Rúbrica,                              ${r.ministro||'___'}.`;
     margen  = `Al margen se lee N.° ${r.partida||'__'}, ${nombre} H.L.`;
 
   } else if (tipo === 'matrimonio') {
     nombre  = `${r.esposo_nombres} ${r.esposo_apellidos} y ${r.esposa_nombres} ${r.esposa_apellidos}`.toUpperCase();
     const fraseInicio   = config.m_frase_inicio   || 'El infrascrito Párroco de';
-    const fraseLibro    = config.m_frase_libro    || 'En el libro de matrimonios N.°';
+    const fraseLibro    = config.m_frase_libro    || 'En el libro de matrimonios';
     const verbo         = config.m_verbo          || 'asistió al matrimonio';
     const fraseTestigos = config.m_frase_testigos || 'Testigos';
-    intro   = `${fraseInicio} ${parroquia}, CERTIFICA QUE:\n${fraseLibro} ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la partida que literalmente dice:`;
-    cuerpo  = `En ${lugar} a ${fechaALetras(r.fecha_matrimonio)}, el Padre: ${r.ministro||'___'}, ${verbo} ${r.tipo==='civil'?'canónico y civil':'canónico'} de: ${r.esposo_nombres.toUpperCase()} ${r.esposo_apellidos.toUpperCase()}${r.esposo_lugar_nacimiento?', originario de '+r.esposo_lugar_nacimiento:''}, y ${r.esposa_nombres.toUpperCase()} ${r.esposa_apellidos.toUpperCase()}${r.esposa_lugar_nacimiento?', originaria de '+r.esposa_lugar_nacimiento:''}. ${fraseTestigos}: ${r.testigo1_nombre||'___'} y ${r.testigo2_nombre||'___'}.`;
+    intro  = `${fraseInicio} ${parroquia}, CERTIFICA QUE:\n${fraseLibro} N.° ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la partida que literalmente dice:`;
+    cuerpo = `En ${lugar} a ${fechaALetras(r.fecha_matrimonio)}, el Padre: ${r.ministro||'___'}, ${verbo} ${r.tipo==='civil'?'canónico y civil':'canónico'} de: ${r.esposo_nombres.toUpperCase()} ${r.esposo_apellidos.toUpperCase()}${r.esposo_lugar_nacimiento?', originario de '+r.esposo_lugar_nacimiento:''}, y ${r.esposa_nombres.toUpperCase()} ${r.esposa_apellidos.toUpperCase()}${r.esposa_lugar_nacimiento?', originaria de '+r.esposa_lugar_nacimiento:''}. ${fraseTestigos}: ${r.testigo1_nombre||'___'} y ${r.testigo2_nombre||'___'}.`;
     rubrica = `Rúbrica,                              ${r.ministro||'___'}.`;
     margen  = `Al margen se lee N.° ${r.partida||'__'}, ${nombre}.`;
   }

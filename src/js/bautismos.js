@@ -35,7 +35,7 @@ function renderTabla(registros) {
   cont.innerHTML = `<table>
     <thead><tr>
       <th>#</th><th>Nombre completo</th><th>Fecha de bautismo</th>
-      <th>Libro</th><th>Folio</th><th>Partida</th><th>Ministro</th><th></th>
+      <th>Libro</th><th>Folio</th><th>Partida</th><th>Filiacion</th><th></th>
     </tr></thead>
     <tbody>
       ${registros.map((r,i) => `<tr>
@@ -45,7 +45,7 @@ function renderTabla(registros) {
         <td class="muted">${r.libro||'—'}</td>
         <td class="muted">${r.folio||'—'}</td>
         <td><span class="badge badge-bautismo">${r.partida||'—'}</span></td>
-        <td class="muted">${r.ministro||'—'}</td>
+        <td class="muted">${r.filiacion||'H.L.'}</td>
         <td style="display:flex; gap:6px; justify-content:flex-end;">
           <button onclick="editarRegistro('${r.id}')" class="btn-icon"><i class="ti ti-pencil"></i> Editar</button>
           <button onclick="eliminarRegistro('${r.id}', '${r.nombres} ${r.apellidos}')" class="btn-icon" style="color:#C0392B; border-color:#FECACA;"><i class="ti ti-trash"></i></button>
@@ -66,15 +66,16 @@ function renderPaginacion() {
   html += `<span style="color:var(--gray-400);">Mostrando ${((paginaActual-1)*POR_PAGINA)+1}–${Math.min(paginaActual*POR_PAGINA, totalRegistros)} de ${totalRegistros}</span>`;
   html += `<button onclick="cambiarPagina(${paginaActual-1})" ${paginaActual===1?'disabled':''} class="btn-icon"><i class="ti ti-chevron-left"></i></button>`;
 
-  for (let i = 1; i <= totalPaginas; i++) {
-    if (i === 1 || i === totalPaginas || (i >= paginaActual-2 && i <= paginaActual+2)) {
+  const totalPaginasN = Math.ceil(totalRegistros / POR_PAGINA);
+  for (let i = 1; i <= totalPaginasN; i++) {
+    if (i === 1 || i === totalPaginasN || (i >= paginaActual-2 && i <= paginaActual+2)) {
       html += `<button onclick="cambiarPagina(${i})" class="btn-icon" style="${i===paginaActual?'background:var(--navy);color:#fff;border-color:var(--navy);':''}">${i}</button>`;
     } else if (i === paginaActual-3 || i === paginaActual+3) {
       html += `<span style="color:var(--gray-400);">...</span>`;
     }
   }
 
-  html += `<button onclick="cambiarPagina(${paginaActual+1})" ${paginaActual===totalPaginas?'disabled':''} class="btn-icon"><i class="ti ti-chevron-right"></i></button>`;
+  html += `<button onclick="cambiarPagina(${paginaActual+1})" ${paginaActual===totalPaginasN?'disabled':''} class="btn-icon"><i class="ti ti-chevron-right"></i></button>`;
   html += `</div>`;
   cont.innerHTML = html;
 }
@@ -131,31 +132,34 @@ function editarRegistro(id) {
   document.querySelector('#vista-formulario h2').textContent = 'Editar Registro de Bautismo';
   document.getElementById('vista-lista').style.display = 'none';
   document.getElementById('vista-formulario').style.display = 'block';
-  document.getElementById('f-nombres').value   = r.nombres || '';
-  document.getElementById('f-apellidos').value = r.apellidos || '';
-  document.getElementById('f-fechnac').value   = r.fecha_nacimiento || '';
-  document.getElementById('f-lugarnac').value  = r.lugar_nacimiento || '';
-  document.getElementById('f-sexo').value      = r.sexo || '';
-  document.getElementById('f-fechbaut').value  = r.fecha_bautismo || '';
-  document.getElementById('f-libro').value     = r.libro || '';
-  document.getElementById('f-folio').value     = r.folio || '';
-  document.getElementById('f-partida').value   = r.partida || '';
-  document.getElementById('f-parroquia').value = r.parroquia || '';
-  document.getElementById('f-lugar').value     = r.municipio || '';
-  document.getElementById('f-ministro').value  = r.ministro || '';
-  document.getElementById('f-padre').value     = r.padre_nombre || '';
-  document.getElementById('f-madre').value     = r.madre_nombre || '';
-  document.getElementById('f-padrino').value   = r.padrino_nombre || '';
-  document.getElementById('f-madrina').value   = r.madrina_nombre || '';
-  document.getElementById('f-notas').value     = r.notas || '';
+  document.getElementById('f-nombres').value    = r.nombres || '';
+  document.getElementById('f-apellidos').value  = r.apellidos || '';
+  document.getElementById('f-fechnac').value    = r.fecha_nacimiento || '';
+  document.getElementById('f-lugarnac').value   = r.lugar_nacimiento || '';
+  document.getElementById('f-sexo').value       = r.sexo || '';
+  document.getElementById('f-fechbaut').value   = r.fecha_bautismo || '';
+  document.getElementById('f-filiacion').value  = r.filiacion || 'H.L.';
+  document.getElementById('f-libro').value      = r.libro || '';
+  document.getElementById('f-folio').value      = r.folio || '';
+  document.getElementById('f-partida').value    = r.partida || '';
+  document.getElementById('f-parroquia').value  = r.parroquia || '';
+  document.getElementById('f-lugar').value      = r.municipio || '';
+  document.getElementById('f-ministro').value   = r.ministro || '';
+  document.getElementById('f-padre').value      = r.padre_nombre || '';
+  document.getElementById('f-madre').value      = r.madre_nombre || '';
+  document.getElementById('f-padrino').value    = r.padrino_nombre || '';
+  document.getElementById('f-madrina').value    = r.madrina_nombre || '';
+  document.getElementById('f-notas').value      = r.notas || '';
   irPaso(1);
 }
 
 function limpiar() {
   ['f-nombres','f-apellidos','f-fechnac','f-lugarnac','f-sexo','f-fechbaut',
-   'f-libro','f-folio','f-partida','f-parroquia','f-lugar','f-ministro',
-   'f-padre','f-madre','f-padrino','f-madrina','f-notas'].forEach(id => {
-    document.getElementById(id).value = '';
+   'f-filiacion','f-libro','f-folio','f-partida','f-parroquia','f-lugar',
+   'f-ministro','f-padre','f-madre','f-padrino','f-madrina','f-notas']
+  .forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = id === 'f-filiacion' ? 'H.L.' : '';
   });
 }
 
@@ -174,11 +178,13 @@ async function guardar() {
   }
 
   const registro = {
-    nombres, apellidos,
+    nombres,
+    apellidos,
     fecha_nacimiento:  document.getElementById('f-fechnac').value || null,
     lugar_nacimiento:  document.getElementById('f-lugarnac').value.trim() || null,
     sexo:              document.getElementById('f-sexo').value || null,
     fecha_bautismo:    fechbaut,
+    filiacion:         document.getElementById('f-filiacion').value,
     libro:             document.getElementById('f-libro').value.trim() || null,
     folio:             document.getElementById('f-folio').value.trim() || null,
     partida:           document.getElementById('f-partida').value.trim() || null,
