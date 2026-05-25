@@ -55,111 +55,253 @@
     <div class="page-header">
       <div class="page-header-left">
         <h2>Configuracion</h2>
-        <p>Datos de la parroquia y plantillas de constancias</p>
+        <p>Esta informacion se usara en todas las constancias que se impriman</p>
       </div>
       <button class="btn-gold" onclick="guardarConfig()"><i class="ti ti-device-floppy"></i> Guardar cambios</button>
     </div>
 
     <div id="alerta" class="alert" style="margin-bottom:1rem;"></div>
 
-    <!-- Datos de la parroquia -->
+    <!-- DATOS DE LA PARROQUIA -->
     <div class="card" style="margin-bottom:1.25rem;">
       <div class="card-header">
         <div class="card-title"><i class="ti ti-building-church"></i> Datos de la Parroquia</div>
       </div>
+      <p style="font-size:13px; color:var(--gray-400); margin-bottom:1.25rem;">Esta informacion aparecera en el encabezado y cuerpo de todas las constancias.</p>
       <div class="grid-2">
-        <div class="field"><label>Nombre de la parroquia</label><input type="text" id="c-nombre" placeholder="Ej: San Juan Evangelista"></div>
-        <div class="field"><label>Nombre del parroco</label><input type="text" id="c-parroco" placeholder="Ej: Pbro. Manuel Lozano"></div>
-        <div class="field"><label>Direccion</label><input type="text" id="c-direccion" placeholder="Direccion completa"></div>
-        <div class="field"><label>Municipio</label><input type="text" id="c-municipio" placeholder="Ej: San Juan Opico"></div>
-        <div class="field"><label>Departamento</label><input type="text" id="c-departamento" placeholder="Ej: La Libertad"></div>
-        <div class="field"><label>Telefono</label><input type="text" id="c-telefono" placeholder="Ej: 2398-0414"></div>
-        <div class="field"><label>Email</label><input type="email" id="c-email" placeholder="Ej: parroquia@gmail.com"></div>
+        <div class="field">
+          <label>Nombre de la parroquia</label>
+          <input type="text" id="c-nombre" placeholder="Ej: San Juan Evangelista">
+          <span style="font-size:11px; color:var(--gray-400); margin-top:3px;">Nombre oficial completo de la parroquia</span>
+        </div>
+        <div class="field">
+          <label>Nombre del parroco actual</label>
+          <input type="text" id="c-parroco" placeholder="Ej: Pbro. Manuel Lozano">
+          <span style="font-size:11px; color:var(--gray-400); margin-top:3px;">Nombre del sacerdote que firma las constancias</span>
+        </div>
+        <div class="field">
+          <label>Municipio</label>
+          <input type="text" id="c-municipio" placeholder="Ej: San Juan Opico">
+        </div>
+        <div class="field">
+          <label>Departamento</label>
+          <input type="text" id="c-departamento" placeholder="Ej: La Libertad">
+        </div>
+        <div class="field">
+          <label>Direccion</label>
+          <input type="text" id="c-direccion" placeholder="Ej: Calle Principal, frente al parque">
+        </div>
+        <div class="field">
+          <label>Telefono</label>
+          <input type="text" id="c-telefono" placeholder="Ej: 2398-0414">
+        </div>
+        <div class="field">
+          <label>Correo electronico</label>
+          <input type="email" id="c-email" placeholder="Ej: parroquia@gmail.com">
+        </div>
       </div>
     </div>
 
-    <!-- Plantillas -->
+    <!-- FORMATO DE CONSTANCIAS -->
     <div class="card">
       <div class="card-header">
-        <div class="card-title"><i class="ti ti-file-text"></i> Plantillas de Constancias</div>
+        <div class="card-title"><i class="ti ti-file-text"></i> Formato de las Constancias</div>
       </div>
-
-      <!-- Variables disponibles -->
-      <div style="background:var(--gray-50); border:1px solid var(--border); border-radius:var(--radius); padding:1rem; margin-bottom:1.25rem; font-size:13px;">
-        <div style="font-weight:600; color:var(--navy); margin-bottom:0.5rem;">Variables disponibles:</div>
-        <div style="display:flex; flex-wrap:wrap; gap:6px;">  
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{parroquia}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{municipio}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{libro}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{folio}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{partida}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{ministro}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{nombre}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{fecha_nacimiento}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{fecha_bautismo}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{fecha_confirmacion}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{fecha_comunion}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{fecha_matrimonio}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{padre}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{madre}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{padrino}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{madrina}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{nombre_confirmacion}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{hijo_hija}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{esposo}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{esposa}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{testigo1}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{testigo2}</span>
-          <span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">{tipo_matrimonio}</span>
-        </div>
-      </div>
+      <p style="font-size:13px; color:var(--gray-400); margin-bottom:1.25rem;">
+        Personaliza el texto que aparece en cada tipo de constancia. Los datos del registro (nombres, fechas, libro, etc.) se insertan automaticamente — aqui solo defines como esta redactado el texto.
+      </p>
 
       <!-- Tabs -->
-      <div style="display:flex; gap:4px; margin-bottom:1.25rem; border-bottom:1px solid var(--border); padding-bottom:0;">
-        <button onclick="cambiarTab('bautismo')" id="tab-bautismo" class="tab-plantilla active-tab">Bautismo</button>
-        <button onclick="cambiarTab('confirmacion')" id="tab-confirmacion" class="tab-plantilla">Confirmacion</button>
-        <button onclick="cambiarTab('comunion')" id="tab-comunion" class="tab-plantilla">Primera Comunion</button>
-        <button onclick="cambiarTab('matrimonio')" id="tab-matrimonio" class="tab-plantilla">Matrimonio</button>
+      <div style="display:flex; gap:4px; margin-bottom:1.5rem; border-bottom:1px solid var(--border);">
+        <button onclick="cambiarTab('bautismo')" id="tab-bautismo" class="tab-plantilla active-tab"><i class="ti ti-droplet" style="font-size:14px;"></i> Bautismo</button>
+        <button onclick="cambiarTab('confirmacion')" id="tab-confirmacion" class="tab-plantilla"><i class="ti ti-flame" style="font-size:14px;"></i> Confirmacion</button>
+        <button onclick="cambiarTab('comunion')" id="tab-comunion" class="tab-plantilla"><i class="ti ti-bread" style="font-size:14px;"></i> Primera Comunion</button>
+        <button onclick="cambiarTab('matrimonio')" id="tab-matrimonio" class="tab-plantilla"><i class="ti ti-rings" style="font-size:14px;"></i> Matrimonio</button>
       </div>
 
-      <!-- Editores -->
+      <!-- BAUTISMO -->
       <div id="editor-bautismo">
-        <div class="field">
-          <label>Texto de la constancia de bautismo</label>
-          <textarea id="c-plantilla-bautismo" style="min-height:180px; font-family:monospace; font-size:13px;"></textarea>
+        <div style="background:#F0F4FF; border:1px solid #C7D4F5; border-radius:var(--radius); padding:1rem; margin-bottom:1.5rem; font-size:13px; color:var(--navy);">
+          <strong>Como funciona:</strong> El sistema genera automaticamente el texto con los datos del registro. Aqui puedes ajustar como esta redactado segun el estilo de tu parroquia.
         </div>
-        <div style="margin-top:0.75rem;">
-          <button class="btn-secondary" onclick="verPreview('bautismo')"><i class="ti ti-eye"></i> Vista previa</button>
+
+        <div class="form-section">
+          <div class="form-section-header"><i class="ti ti-pencil"></i><div class="form-section-title">Frase de certificacion</div></div>
+          <div class="grid-1">
+            <div class="field">
+              <label>Como inicia el documento</label>
+              <input type="text" id="b-frase-inicio" placeholder="Ej: El infrascrito Párroco de">
+              <span style="font-size:11px; color:var(--gray-400); margin-top:3px;">Seguido automaticamente del nombre de la parroquia y "CERTIFICA QUE:"</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-header"><i class="ti ti-book"></i><div class="form-section-title">Referencia al libro</div></div>
+          <div class="grid-1">
+            <div class="field">
+              <label>Texto de referencia al libro</label>
+              <input type="text" id="b-frase-libro" placeholder="Ej: En el libro de bautismos N.°">
+              <span style="font-size:11px; color:var(--gray-400); margin-top:3px;">Seguido automaticamente del numero de libro, folio y asiento</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-header"><i class="ti ti-user"></i><div class="form-section-title">Texto del acta</div></div>
+          <div class="grid-1">
+            <div class="field">
+              <label>Verbo usado para el bautismo</label>
+              <input type="text" id="b-verbo" placeholder="Ej: bautizó solemnemente a">
+              <span style="font-size:11px; color:var(--gray-400); margin-top:3px;">Ej: "bautizó solemnemente a", "administró el bautismo a"</span>
+            </div>
+            <div class="field">
+              <label>Texto para presentar a los padres</label>
+              <input type="text" id="b-frase-padres" placeholder="Ej: hijo legítimo/a de">
+              <span style="font-size:11px; color:var(--gray-400); margin-top:3px;">Seguido automaticamente del nombre del padre y la madre</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:1rem;">
+          <button class="btn-secondary" onclick="verPreview('bautismo')"><i class="ti ti-eye"></i> Ver como quedaria la constancia</button>
         </div>
       </div>
 
+      <!-- CONFIRMACION -->
       <div id="editor-confirmacion" style="display:none;">
-        <div class="field">
-          <label>Texto de la constancia de confirmacion</label>
-          <textarea id="c-plantilla-confirmacion" style="min-height:180px; font-family:monospace; font-size:13px;"></textarea>
+        <div style="background:#F0F4FF; border:1px solid #C7D4F5; border-radius:var(--radius); padding:1rem; margin-bottom:1.5rem; font-size:13px; color:var(--navy);">
+          <strong>Como funciona:</strong> El sistema inserta automaticamente los datos del confirmado. Aqui ajustas la redaccion segun el estilo de tu parroquia.
         </div>
-        <div style="margin-top:0.75rem;">
-          <button class="btn-secondary" onclick="verPreview('confirmacion')"><i class="ti ti-eye"></i> Vista previa</button>
+
+        <div class="form-section">
+          <div class="form-section-header"><i class="ti ti-pencil"></i><div class="form-section-title">Frase de certificacion</div></div>
+          <div class="grid-1">
+            <div class="field">
+              <label>Como inicia el documento</label>
+              <input type="text" id="c2-frase-inicio" placeholder="Ej: El infrascrito Párroco de">
+              <span style="font-size:11px; color:var(--gray-400); margin-top:3px;">Seguido automaticamente del nombre de la parroquia y "CERTIFICA QUE:"</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-header"><i class="ti ti-book"></i><div class="form-section-title">Referencia al libro</div></div>
+          <div class="grid-1">
+            <div class="field">
+              <label>Texto de referencia al libro</label>
+              <input type="text" id="c2-frase-libro" placeholder="Ej: En el libro de confirmaciones N.°">
+              <span style="font-size:11px; color:var(--gray-400); margin-top:3px;">Seguido automaticamente del numero de libro, folio y asiento</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-header"><i class="ti ti-user"></i><div class="form-section-title">Texto del acta</div></div>
+          <div class="grid-1">
+            <div class="field">
+              <label>Verbo usado para la confirmacion</label>
+              <input type="text" id="c2-verbo" placeholder="Ej: confirmó a">
+              <span style="font-size:11px; color:var(--gray-400); margin-top:3px;">Ej: "confirmó a", "administró el sacramento de la Confirmacion a"</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:1rem;">
+          <button class="btn-secondary" onclick="verPreview('confirmacion')"><i class="ti ti-eye"></i> Ver como quedaria la constancia</button>
         </div>
       </div>
 
+      <!-- COMUNION -->
       <div id="editor-comunion" style="display:none;">
-        <div class="field">
-          <label>Texto de la constancia de primera comunion</label>
-          <textarea id="c-plantilla-comunion" style="min-height:180px; font-family:monospace; font-size:13px;"></textarea>
+        <div style="background:#F0F4FF; border:1px solid #C7D4F5; border-radius:var(--radius); padding:1rem; margin-bottom:1.5rem; font-size:13px; color:var(--navy);">
+          <strong>Como funciona:</strong> El sistema inserta automaticamente los datos del comulgante. Aqui ajustas la redaccion.
         </div>
-        <div style="margin-top:0.75rem;">
-          <button class="btn-secondary" onclick="verPreview('comunion')"><i class="ti ti-eye"></i> Vista previa</button>
+
+        <div class="form-section">
+          <div class="form-section-header"><i class="ti ti-pencil"></i><div class="form-section-title">Frase de certificacion</div></div>
+          <div class="grid-1">
+            <div class="field">
+              <label>Como inicia el documento</label>
+              <input type="text" id="co-frase-inicio" placeholder="Ej: El infrascrito Párroco de">
+              <span style="font-size:11px; color:var(--gray-400); margin-top:3px;">Seguido automaticamente del nombre de la parroquia y "CERTIFICA QUE:"</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-header"><i class="ti ti-book"></i><div class="form-section-title">Referencia al libro</div></div>
+          <div class="grid-1">
+            <div class="field">
+              <label>Texto de referencia al libro</label>
+              <input type="text" id="co-frase-libro" placeholder="Ej: En el libro de primeras comuniones N.°">
+              <span style="font-size:11px; color:var(--gray-400); margin-top:3px;">Seguido automaticamente del numero de libro, folio y asiento</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-header"><i class="ti ti-user"></i><div class="form-section-title">Texto del acta</div></div>
+          <div class="grid-1">
+            <div class="field">
+              <label>Frase para la primera comunion</label>
+              <input type="text" id="co-verbo" placeholder="Ej: administró por primera vez la Sagrada Eucaristía a">
+              <span style="font-size:11px; color:var(--gray-400); margin-top:3px;">Seguido automaticamente del nombre del comulgante</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:1rem;">
+          <button class="btn-secondary" onclick="verPreview('comunion')"><i class="ti ti-eye"></i> Ver como quedaria la constancia</button>
         </div>
       </div>
 
+      <!-- MATRIMONIO -->
       <div id="editor-matrimonio" style="display:none;">
-        <div class="field">
-          <label>Texto de la constancia de matrimonio</label>
-          <textarea id="c-plantilla-matrimonio" style="min-height:180px; font-family:monospace; font-size:13px;"></textarea>
+        <div style="background:#F0F4FF; border:1px solid #C7D4F5; border-radius:var(--radius); padding:1rem; margin-bottom:1.5rem; font-size:13px; color:var(--navy);">
+          <strong>Como funciona:</strong> El sistema inserta automaticamente los datos de los esposos. Aqui ajustas la redaccion.
         </div>
-        <div style="margin-top:0.75rem;">
-          <button class="btn-secondary" onclick="verPreview('matrimonio')"><i class="ti ti-eye"></i> Vista previa</button>
+
+        <div class="form-section">
+          <div class="form-section-header"><i class="ti ti-pencil"></i><div class="form-section-title">Frase de certificacion</div></div>
+          <div class="grid-1">
+            <div class="field">
+              <label>Como inicia el documento</label>
+              <input type="text" id="m-frase-inicio" placeholder="Ej: El infrascrito Párroco de">
+              <span style="font-size:11px; color:var(--gray-400); margin-top:3px;">Seguido automaticamente del nombre de la parroquia y "CERTIFICA QUE:"</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-header"><i class="ti ti-book"></i><div class="form-section-title">Referencia al libro</div></div>
+          <div class="grid-1">
+            <div class="field">
+              <label>Texto de referencia al libro</label>
+              <input type="text" id="m-frase-libro" placeholder="Ej: En el libro de matrimonios N.°">
+              <span style="font-size:11px; color:var(--gray-400); margin-top:3px;">Seguido automaticamente del numero de libro, folio y asiento</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-header"><i class="ti ti-rings"></i><div class="form-section-title">Texto del acta</div></div>
+          <div class="grid-1">
+            <div class="field">
+              <label>Verbo para el matrimonio</label>
+              <input type="text" id="m-verbo" placeholder="Ej: asistió al matrimonio">
+              <span style="font-size:11px; color:var(--gray-400); margin-top:3px;">Ej: "asistió al matrimonio", "bendijo la union matrimonial"</span>
+            </div>
+            <div class="field">
+              <label>Texto para presentar a los testigos</label>
+              <input type="text" id="m-frase-testigos" placeholder="Ej: Testigos">
+              <span style="font-size:11px; color:var(--gray-400); margin-top:3px;">Seguido automaticamente de los nombres de los testigos</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:1rem;">
+          <button class="btn-secondary" onclick="verPreview('matrimonio')"><i class="ti ti-eye"></i> Ver como quedaria la constancia</button>
         </div>
       </div>
     </div>
@@ -179,6 +321,9 @@
   font-weight: 500;
   transition: all 0.15s;
   margin-bottom: -1px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 .tab-plantilla:hover { color: var(--navy); }
 .active-tab { color: var(--navy) !important; border-bottom-color: var(--navy) !important; }
