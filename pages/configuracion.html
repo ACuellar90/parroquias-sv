@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuracion — Parroquias SV</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="../src/css/main.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">✝</div>
+      <div class="sidebar-brand-text"><strong>Parroquias SV</strong><span>Sistema Sacramental</span></div>
+    </div>
+    <div class="sidebar-parroquia"><i class="ti ti-building-church"></i><span id="nombre-parroquia-sidebar">Archivo Digital</span></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Principal</div>
+      <a href="dashboard.html" class="nav-item"><i class="ti ti-layout-dashboard"></i> Panel de Control</a>
+      <a href="busqueda.html" class="nav-item"><i class="ti ti-search"></i> Busqueda Global</a>
+      <div class="nav-section">Libros Sacramentales</div>
+      <a href="bautismos.html" class="nav-item"><i class="ti ti-droplet"></i> Bautismos</a>
+      <a href="confirmaciones.html" class="nav-item"><i class="ti ti-flame"></i> Confirmaciones</a>
+      <a href="comuniones.html" class="nav-item"><i class="ti ti-bread"></i> Primeras Comuniones</a>
+      <a href="matrimonios.html" class="nav-item"><i class="ti ti-rings"></i> Matrimonios</a>
+      <div class="nav-section">Sistema</div>
+      <a href="configuracion.html" class="nav-item active"><i class="ti ti-settings"></i> Configuracion</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar"><i class="ti ti-user" style="font-size:13px;"></i></div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="usuario-nombre">Usuario</div>
+          <div class="sidebar-user-role">Secretaria</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logout()"><i class="ti ti-logout"></i> Cerrar sesion</button>
+    </div>
+  </aside>
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-breadcrumb">Sistema</span>
+      <span class="topbar-sep">/</span>
+      <span class="topbar-title">Configuracion</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-date" id="fecha-hoy"></span>
+    </div>
+  </div>
+
+  <main class="main">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h2>Configuracion</h2>
+        <p>Datos de la parroquia y plantillas de constancias</p>
+      </div>
+      <button class="btn-gold" onclick="guardarConfig()"><i class="ti ti-device-floppy"></i> Guardar cambios</button>
+    </div>
+
+    <div id="alerta" class="alert" style="margin-bottom:1rem;"></div>
+
+    <!-- Datos de la parroquia -->
+    <div class="card" style="margin-bottom:1.25rem;">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-building-church"></i> Datos de la Parroquia</div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>Nombre de la parroquia</label><input type="text" id="c-nombre" placeholder="Ej: San Juan Evangelista"></div>
+        <div class="field"><label>Nombre del parroco</label><input type="text" id="c-parroco" placeholder="Ej: Pbro. Manuel Lozano"></div>
+        <div class="field"><label>Direccion</label><input type="text" id="c-direccion" placeholder="Direccion completa"></div>
+        <div class="field"><label>Municipio</label><input type="text" id="c-municipio" placeholder="Ej: San Juan Opico"></div>
+        <div class="field"><label>Departamento</label><input type="text" id="c-departamento" placeholder="Ej: La Libertad"></div>
+        <div class="field"><label>Telefono</label><input type="text" id="c-telefono" placeholder="Ej: 2398-0414"></div>
+        <div class="field"><label>Email</label><input type="email" id="c-email" placeholder="Ej: parroquia@gmail.com"></div>
+      </div>
+    </div>
+
+    <!-- Plantillas -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="ti ti-file-text"></i> Plantillas de Constancias</div>
+      </div>
+
+      <!-- Variables disponibles -->
+      <div style="background:var(--gray-50); border:1px solid var(--border); border-radius:var(--radius); padding:1rem; margin-bottom:1.25rem; font-size:13px;">
+        <div style="font-weight:600; color:var(--navy); margin-bottom:0.5rem;">Variables disponibles:</div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          ${['{parroquia}','{municipio}','{libro}','{folio}','{partida}','{ministro}','{nombre}',
+             '{fecha_nacimiento}','{fecha_bautismo}','{fecha_confirmacion}','{fecha_comunion}',
+             '{fecha_matrimonio}','{padre}','{madre}','{padrino}','{madrina}','{nombre_confirmacion}',
+             '{hijo_hija}','{esposo}','{esposa}','{testigo1}','{testigo2}','{tipo_matrimonio}']
+            .map(v => `<span style="background:var(--navy);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-family:monospace;">${v}</span>`)
+            .join('')}
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div style="display:flex; gap:4px; margin-bottom:1.25rem; border-bottom:1px solid var(--border); padding-bottom:0;">
+        <button onclick="cambiarTab('bautismo')" id="tab-bautismo" class="tab-plantilla active-tab">Bautismo</button>
+        <button onclick="cambiarTab('confirmacion')" id="tab-confirmacion" class="tab-plantilla">Confirmacion</button>
+        <button onclick="cambiarTab('comunion')" id="tab-comunion" class="tab-plantilla">Primera Comunion</button>
+        <button onclick="cambiarTab('matrimonio')" id="tab-matrimonio" class="tab-plantilla">Matrimonio</button>
+      </div>
+
+      <!-- Editores -->
+      <div id="editor-bautismo">
+        <div class="field">
+          <label>Texto de la constancia de bautismo</label>
+          <textarea id="c-plantilla-bautismo" style="min-height:180px; font-family:monospace; font-size:13px;"></textarea>
+        </div>
+        <div style="margin-top:0.75rem;">
+          <button class="btn-secondary" onclick="verPreview('bautismo')"><i class="ti ti-eye"></i> Vista previa</button>
+        </div>
+      </div>
+
+      <div id="editor-confirmacion" style="display:none;">
+        <div class="field">
+          <label>Texto de la constancia de confirmacion</label>
+          <textarea id="c-plantilla-confirmacion" style="min-height:180px; font-family:monospace; font-size:13px;"></textarea>
+        </div>
+        <div style="margin-top:0.75rem;">
+          <button class="btn-secondary" onclick="verPreview('confirmacion')"><i class="ti ti-eye"></i> Vista previa</button>
+        </div>
+      </div>
+
+      <div id="editor-comunion" style="display:none;">
+        <div class="field">
+          <label>Texto de la constancia de primera comunion</label>
+          <textarea id="c-plantilla-comunion" style="min-height:180px; font-family:monospace; font-size:13px;"></textarea>
+        </div>
+        <div style="margin-top:0.75rem;">
+          <button class="btn-secondary" onclick="verPreview('comunion')"><i class="ti ti-eye"></i> Vista previa</button>
+        </div>
+      </div>
+
+      <div id="editor-matrimonio" style="display:none;">
+        <div class="field">
+          <label>Texto de la constancia de matrimonio</label>
+          <textarea id="c-plantilla-matrimonio" style="min-height:180px; font-family:monospace; font-size:13px;"></textarea>
+        </div>
+        <div style="margin-top:0.75rem;">
+          <button class="btn-secondary" onclick="verPreview('matrimonio')"><i class="ti ti-eye"></i> Vista previa</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<style>
+.tab-plantilla {
+  padding: 8px 16px;
+  font-size: 13px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  color: var(--gray-400);
+  font-weight: 500;
+  transition: all 0.15s;
+  margin-bottom: -1px;
+}
+.tab-plantilla:hover { color: var(--navy); }
+.active-tab { color: var(--navy) !important; border-bottom-color: var(--navy) !important; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../src/js/config.js"></script>
+<script src="../src/js/auth.js"></script>
+<script src="../src/js/configuracion.js"></script>
+<script>
+  document.getElementById('fecha-hoy').textContent = new Date().toLocaleDateString('es-SV',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  (async () => { await requireAuth(); await mostrarUsuario(); await cargarConfig(); })();
+
+  function cambiarTab(tipo) {
+    ['bautismo','confirmacion','comunion','matrimonio'].forEach(t => {
+      document.getElementById('editor-'+t).style.display = t === tipo ? 'block' : 'none';
+      document.getElementById('tab-'+t).classList.toggle('active-tab', t === tipo);
+    });
+  }
+</script>
+</body>
+</html>
