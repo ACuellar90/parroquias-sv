@@ -160,18 +160,20 @@ async function generarConstancia() {
   let titulo = '', intro = '', cuerpo = '', rubrica = '', margen = '';
 
   if (tipo === 'bautismo') {
-    const nombre    = `${r.nombres} ${r.apellidos}`.toUpperCase();
-    const filiacion = (r.filiacion || 'H.L.').replace(/\.+$/, '');
-    const esFemenino = r.sexo === 'Femenino';
-    const hijoHija  = filiacion === 'H.L.'
-      ? (esFemenino ? 'hija legítima' : 'hijo legítimo')
-      : (esFemenino ? 'hija ilegítima' : 'hijo ilegítimo');
+    const nombre       = `${r.nombres} ${r.apellidos}`.toUpperCase();
+    const filiacionRaw = r.filiacion || 'H.L.';
+    const esLegitimo   = filiacionRaw.includes('H.L.');
+    const esFemenino   = r.sexo === 'Femenino';
+    const hijoHija     = esLegitimo
+      ? (esFemenino ? 'hija legítima'   : 'hijo legítimo')
+      : (esFemenino ? 'hija ilegítima'  : 'hijo ilegítimo');
+    const margenFiliacion = esLegitimo ? 'H.L.' : 'H.N.';
 
     titulo  = 'FE DE BAUTISMO.';
     intro   = `El infrascrito Párroco de la Parroquia ${parroquia}, CERTIFICA QUE:\nEn el libro de bautismos N.º <strong>${r.libro||'__'}</strong>, folio <strong>${r.folio||'__'}</strong>, asiento <strong>${r.partida||'__'}</strong>, se encuentra la que literalmente dice:`;
     cuerpo  = `En ${municipio} a ${fechaALetras(r.fecha_bautismo)}, el ${r.ministro||'___'}, bautizó solemnemente a: <strong>${nombre}</strong> que nació el día ${fechaALetras(r.fecha_nacimiento)}, ${hijoHija} de: ${r.padre_nombre||'___'} y de ${r.madre_nombre||'___'}.${r.padrino_nombre||r.madrina_nombre?' Padrinos: '+(r.padrino_nombre||'')+(r.padrino_nombre&&r.madrina_nombre?', ':'')+(r.madrina_nombre||'')+'.':''}`;
     rubrica = `Rúbrica, ${parroco}.`;
-    margen  = `Al margen se lee N.º <strong>${r.partida||'__'}</strong>, <strong>${nombre}</strong> ${filiacion}.`;
+    margen  = `Al margen se lee N.º <strong>${r.partida||'__'}</strong>, <strong>${nombre}</strong> ${margenFiliacion}.`;
 
   } else if (tipo === 'confirmacion') {
     const nombre     = `${r.nombres} ${r.apellidos}`.toUpperCase();
