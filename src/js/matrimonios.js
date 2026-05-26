@@ -127,8 +127,6 @@ function editarRegistro(id) {
   document.getElementById('f-expediente').value    = r.expediente || '';
   document.getElementById('f-anio-inicio').value   = r.anio_inicio || '';
   document.getElementById('f-anio-fin').value      = r.anio_fin || '';
-  document.getElementById('f-parroquia').value     = r.parroquia || '';
-  document.getElementById('f-lugar').value         = r.municipio || '';
   document.getElementById('f-ministro').value      = r.ministro || '';
   document.getElementById('f-notas').value         = r.notas || '';
   irPaso(1);
@@ -137,8 +135,11 @@ function editarRegistro(id) {
 function limpiar() {
   ['f-espnombres','f-espapellidos','f-espfechnac','f-esplugarnac','f-edad-esposo','f-padre-esposo','f-madre-esposo',
    'f-espanombres','f-espaapellidos','f-espafechnac','f-espalugarnac','f-edad-esposa','f-padre-esposa','f-madre-esposa',
-   'f-padrinos','f-fecha','f-expediente','f-anio-inicio','f-anio-fin','f-parroquia','f-lugar','f-ministro','f-notas']
-  .forEach(id => document.getElementById(id).value = '');
+   'f-padrinos','f-fecha','f-expediente','f-anio-inicio','f-anio-fin','f-ministro','f-notas']
+  .forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
 }
 
 async function guardar() {
@@ -177,8 +178,6 @@ async function guardar() {
     expediente:              document.getElementById('f-expediente').value.trim() || null,
     anio_inicio:             document.getElementById('f-anio-inicio').value.trim() || null,
     anio_fin:                document.getElementById('f-anio-fin').value.trim() || null,
-    parroquia:               document.getElementById('f-parroquia').value.trim() || null,
-    municipio:               document.getElementById('f-lugar').value.trim() || null,
     ministro:                document.getElementById('f-ministro').value.trim() || null,
     notas:                   document.getElementById('f-notas').value.trim() || null,
   };
