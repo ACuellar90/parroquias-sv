@@ -150,25 +150,26 @@ async function generarConstancia() {
 
   document.getElementById('dialogo-impresion').remove();
 
-  const config   = await cargarConfiguracion();
-  const hoyObj   = new Date();
-  const hoyTexto = `${diaALetras(hoyObj.getDate())} días del mes de ${mesALetras(hoyObj.getMonth()+1)} del año ${numeroALetras(hoyObj.getFullYear())}`;
+  const config    = await cargarConfiguracion();
+  const hoyObj    = new Date();
+  const hoyTexto  = `${diaALetras(hoyObj.getDate())} días del mes de ${mesALetras(hoyObj.getMonth()+1)} del año ${numeroALetras(hoyObj.getFullYear())}`;
   const municipio = config.parroquia_municipio || '___';
   const parroquia = config.parroquia_nombre    || '___';
+  const parroco   = config.parroco_nombre      || '___';
 
   let titulo = '', intro = '', cuerpo = '', rubrica = '', margen = '';
 
   if (tipo === 'bautismo') {
-    const nombre    = `${r.nombres} ${r.apellidos}`.toUpperCase();
-    const filiacion = r.filiacion || 'H.L.';
-    const hijoHija  = filiacion === 'H.L.'
+    const nombre       = `${r.nombres} ${r.apellidos}`.toUpperCase();
+    const filiacion    = (r.filiacion || 'H.L.').replace(/\.+$/, '');
+    const hijoHija     = filiacion === 'H.L.'
       ? (r.sexo === 'Femenino' ? 'hija legítima' : 'hijo legítimo')
       : (r.sexo === 'Femenino' ? 'hija natural'  : 'hijo natural');
 
-    titulo = 'FE DE BAUTISMO.';
-    intro  = `El infrascrito Párroco de la Parroquia ${parroquia}, CERTIFICA QUE:\nEn el libro de bautismos N.º <strong>${r.libro||'__'}</strong>, folio <strong>${r.folio||'__'}</strong>, asiento <strong>${r.partida||'__'}</strong>, se encuentra la que literalmente dice:`;
-    cuerpo = `En ${municipio} a ${fechaALetras(r.fecha_bautismo)}, el Padre: ${r.ministro||'___'}, bautizó solemnemente a: <strong>${nombre}</strong> que nació el día ${fechaALetras(r.fecha_nacimiento)}, ${hijoHija} de: ${r.padre_nombre||'___'} y de ${r.madre_nombre||'___'}.${r.padrino_nombre||r.madrina_nombre ? ' Padrinos: '+(r.padrino_nombre||'')+(r.padrino_nombre&&r.madrina_nombre?', ':' ')+(r.madrina_nombre||'')+'.':''}`;
-    rubrica = `Rúbrica, ${r.ministro||'___'}.`;
+    titulo  = 'FE DE BAUTISMO.';
+    intro   = `El infrascrito Párroco de la Parroquia ${parroquia}, CERTIFICA QUE:\nEn el libro de bautismos N.º <strong>${r.libro||'__'}</strong>, folio <strong>${r.folio||'__'}</strong>, asiento <strong>${r.partida||'__'}</strong>, se encuentra la que literalmente dice:`;
+    cuerpo  = `En ${municipio} a ${fechaALetras(r.fecha_bautismo)}, el ${r.ministro||'___'}, bautizó solemnemente a: <strong>${nombre}</strong> que nació el día ${fechaALetras(r.fecha_nacimiento)}, ${hijoHija} de: ${r.padre_nombre||'___'} y de ${r.madre_nombre||'___'}.${r.padrino_nombre||r.madrina_nombre?' Padrinos: '+(r.padrino_nombre||'')+(r.padrino_nombre&&r.madrina_nombre?', ':'')+(r.madrina_nombre||'')+'.':''}`;
+    rubrica = `Rúbrica, ${parroco}.`;
     margen  = `Al margen se lee N.º <strong>${r.partida||'__'}</strong>, <strong>${nombre}</strong> ${filiacion}.`;
 
   } else if (tipo === 'confirmacion') {
@@ -178,9 +179,9 @@ async function generarConstancia() {
     const hijaHijo   = r.sexo === 'Femenino' ? 'hija' : 'hijo';
     const bautizadaO = r.sexo === 'Femenino' ? 'Bautizada' : 'Bautizado';
 
-    titulo = 'ACTA DE CONFIRMACIÓN';
-    intro  = `El infrascrito Párroco de la parroquia ${parroquia}, CERTIFICA QUE:\n\nEn el libro de expedientes de confirmaciones realizadas en el año ${anioInicio} al año ${anioFin}, folio <strong>${r.folio||'__'}</strong>, se encuentra la que literalmente dice:`;
-    cuerpo = `En la Parroquia ${parroquia}, el día ${fechaALetras(r.fecha_confirmacion)}, previa preparación catequética y doctrinal, se administró solemnemente el SACRAMENTO DE LA CONFIRMACIÓN a: <strong>${nombre}</strong>, ${hijaHijo} de: ${r.padre_nombre||'___'} y de ${r.madre_nombre||'___'}.${r.padrino_nombre||r.madrina_nombre?' Padrinos: '+(r.padrino_nombre||'')+(r.padrino_nombre&&r.madrina_nombre?', ' :'')+(r.madrina_nombre||'')+'.':''} ${bautizadaO} en la parroquia ${r.lugar_bautismo||parroquia}.\n\nMinistro Confirmante: ${r.ministro||'___'}.`;
+    titulo  = 'ACTA DE CONFIRMACIÓN';
+    intro   = `El infrascrito Párroco de la parroquia ${parroquia}, CERTIFICA QUE:\n\nEn el libro de expedientes de confirmaciones realizadas en el año ${anioInicio} al año ${anioFin}, folio <strong>${r.folio||'__'}</strong>, se encuentra la que literalmente dice:`;
+    cuerpo  = `En la Parroquia ${parroquia}, el día ${fechaALetras(r.fecha_confirmacion)}, previa preparación catequética y doctrinal, se administró solemnemente el SACRAMENTO DE LA CONFIRMACIÓN a: <strong>${nombre}</strong>, ${hijaHijo} de: ${r.padre_nombre||'___'} y de ${r.madre_nombre||'___'}.${r.padrino_nombre||r.madrina_nombre?' Padrinos: '+(r.padrino_nombre||'')+(r.padrino_nombre&&r.madrina_nombre?', ':'')+(r.madrina_nombre||'')+'.':''} ${bautizadaO} en la parroquia ${r.lugar_bautismo||parroquia}.\n\nMinistro Confirmante: ${r.ministro||'___'}.`;
     rubrica = '';
     margen  = '';
 
@@ -190,21 +191,21 @@ async function generarConstancia() {
     const anioFin    = r.anio_fin    ? numeroALetras(r.anio_fin)    : '___';
     const hijaHijo   = r.sexo === 'Femenino' ? 'hija' : 'hijo';
 
-    titulo = 'CONSTANCIA DE PRIMERA COMUNION';
-    intro  = `El infrascrito Párroco de la parroquia ${parroquia}, CERTIFICA QUE:\n\nEn el libro de expedientes de primeras comuniones realizadas en el año ${anioInicio} al año ${anioFin}, folio <strong>${r.folio||'__'}</strong>, se encuentra la que literalmente dice:`;
-    cuerpo = `En la Parroquia ${parroquia}, el día ${fechaALetras(r.fecha_comunion)}, previa preparación catequética y doctrinal, se administró solemnemente el SACRAMENTO DE LA PRIMERA COMUNION a: <strong>${nombre}</strong>, ${hijaHijo} de: ${r.padre_nombre||'___'} y de ${r.madre_nombre||'___'}.`;
+    titulo  = 'CONSTANCIA DE PRIMERA COMUNION';
+    intro   = `El infrascrito Párroco de la parroquia ${parroquia}, CERTIFICA QUE:\n\nEn el libro de expedientes de primeras comuniones realizadas en el año ${anioInicio} al año ${anioFin}, folio <strong>${r.folio||'__'}</strong>, se encuentra la que literalmente dice:`;
+    cuerpo  = `En la Parroquia ${parroquia}, el día ${fechaALetras(r.fecha_comunion)}, previa preparación catequética y doctrinal, se administró solemnemente el SACRAMENTO DE LA PRIMERA COMUNION a: <strong>${nombre}</strong>, ${hijaHijo} de: ${r.padre_nombre||'___'} y de ${r.madre_nombre||'___'}.`;
     rubrica = '';
     margen  = '';
 
   } else if (tipo === 'matrimonio') {
-    const anioInicio  = r.anio_inicio ? numeroALetras(r.anio_inicio) : '___';
-    const anioFin     = r.anio_fin    ? numeroALetras(r.anio_fin)    : '___';
-    const esposo      = `${r.esposo_nombres} ${r.esposo_apellidos}`.toUpperCase();
-    const esposa      = `${r.esposa_nombres} ${r.esposa_apellidos}`.toUpperCase();
+    const anioInicio = r.anio_inicio ? numeroALetras(r.anio_inicio) : '___';
+    const anioFin    = r.anio_fin    ? numeroALetras(r.anio_fin)    : '___';
+    const esposo     = `${r.esposo_nombres} ${r.esposo_apellidos}`.toUpperCase();
+    const esposa     = `${r.esposa_nombres} ${r.esposa_apellidos}`.toUpperCase();
 
-    titulo = 'ACTA DE MATRIMONIO';
-    intro  = `El infrascrito Párroco de la parroquia ${parroquia}, CERTIFICA QUE:\n\nEn el libro de expedientes matrimoniales realizados en el año ${anioInicio} al año ${anioFin}. Expediente: <strong>${r.expediente||r.partida||'__'}</strong>, se encuentra la que literalmente dice:`;
-    cuerpo = `En la parroquia ${parroquia}, el día ${fechaALetras(r.fecha_matrimonio)}. Previo los trámites de Derecho civil y canónico el Sr. <strong>${esposo}</strong>${r.edad_esposo?', de '+r.edad_esposo+' años de edad':''}. Hijo de: ${r.padre_esposo||'___'} y de ${r.madre_esposo||'___'}. Contrajo matrimonio eclesiástico con: <strong>${esposa}</strong>${r.edad_esposa?', de '+r.edad_esposa+' años de edad':''}, hija de: ${r.padre_esposa||'___'} y de ${r.madre_esposa||'___'}.${r.padrinos?' Fueron padrinos: '+r.padrinos+'.':''}`;
+    titulo  = 'ACTA DE MATRIMONIO';
+    intro   = `El infrascrito Párroco de la parroquia ${parroquia}, CERTIFICA QUE:\n\nEn el libro de expedientes matrimoniales realizados en el año ${anioInicio} al año ${anioFin}. Expediente: <strong>${r.expediente||r.partida||'__'}</strong>, se encuentra la que literalmente dice:`;
+    cuerpo  = `En la parroquia ${parroquia}, el día ${fechaALetras(r.fecha_matrimonio)}. Previo los trámites de Derecho civil y canónico el Sr. <strong>${esposo}</strong>${r.edad_esposo?', de '+r.edad_esposo+' años de edad':''}. Hijo de: ${r.padre_esposo||'___'} y de ${r.madre_esposo||'___'}. Contrajo matrimonio eclesiástico con: <strong>${esposa}</strong>${r.edad_esposa?', de '+r.edad_esposa+' años de edad':''}, hija de: ${r.padre_esposa||'___'} y de ${r.madre_esposa||'___'}.${r.padrinos?' Fueron padrinos: '+r.padrinos+'.':''}`;
     rubrica = '';
     margen  = '';
   }
