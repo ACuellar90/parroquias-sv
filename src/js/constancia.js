@@ -65,7 +65,7 @@ function mesALetras(m) {
 function fechaALetras(fechaStr) {
   if (!fechaStr) return '_______________';
   const [anio, mes, dia] = fechaStr.split('-');
-  return `${diaALetras(dia)} días del mes de ${mesALetras(mes)} del año ${numeroALetras(anio)}`;
+  return `${diaALetras(dia)} del mes de ${mesALetras(mes)} del año ${numeroALetras(anio)}`;
 }
 
 function mostrarDialogoImpresion(r, tipo) {
@@ -152,7 +152,7 @@ async function generarConstancia() {
 
   const config    = await cargarConfiguracion();
   const hoyObj    = new Date();
-  const hoyTexto  = `${diaALetras(hoyObj.getDate())} días del mes de ${mesALetras(hoyObj.getMonth()+1)} del año ${numeroALetras(hoyObj.getFullYear())}`;
+  const hoyTexto  = `${diaALetras(hoyObj.getDate())} del mes de ${mesALetras(hoyObj.getMonth()+1)} del año ${numeroALetras(hoyObj.getFullYear())}`;
   const municipio = config.parroquia_municipio || '___';
   const parroquia = config.parroquia_nombre    || '___';
   const parroco   = config.parroco_nombre      || '___';
@@ -160,11 +160,12 @@ async function generarConstancia() {
   let titulo = '', intro = '', cuerpo = '', rubrica = '', margen = '';
 
   if (tipo === 'bautismo') {
-    const nombre       = `${r.nombres} ${r.apellidos}`.toUpperCase();
-    const filiacion    = (r.filiacion || 'H.L.').replace(/\.+$/, '');
-    const hijoHija     = filiacion === 'H.L.'
-      ? (r.sexo === 'Femenino' ? 'hija legítima' : 'hijo legítimo')
-      : (r.sexo === 'Femenino' ? 'hija natural'  : 'hijo natural');
+    const nombre    = `${r.nombres} ${r.apellidos}`.toUpperCase();
+    const filiacion = (r.filiacion || 'H.L.').replace(/\.+$/, '');
+    const esFemenino = r.sexo === 'Femenino';
+    const hijoHija  = filiacion === 'H.L.'
+      ? (esFemenino ? 'hija legítima' : 'hijo legítimo')
+      : (esFemenino ? 'hija ilegítima' : 'hijo ilegítimo');
 
     titulo  = 'FE DE BAUTISMO.';
     intro   = `El infrascrito Párroco de la Parroquia ${parroquia}, CERTIFICA QUE:\nEn el libro de bautismos N.º <strong>${r.libro||'__'}</strong>, folio <strong>${r.folio||'__'}</strong>, asiento <strong>${r.partida||'__'}</strong>, se encuentra la que literalmente dice:`;
