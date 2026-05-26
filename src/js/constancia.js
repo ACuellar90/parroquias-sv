@@ -173,7 +173,7 @@ async function generarConstancia() {
     intro   = `El infrascrito Párroco de la Parroquia ${parroquia}, CERTIFICA QUE:\nEn el libro de bautismos N.º <strong>${r.libro||'__'}</strong>, folio <strong>${r.folio||'__'}</strong>, asiento <strong>${r.partida||'__'}</strong>, se encuentra la que literalmente dice:`;
     cuerpo  = `En ${municipio} a ${fechaALetras(r.fecha_bautismo)}, el ${r.ministro||'___'}, bautizó solemnemente a: <strong>${nombre}</strong> que nació el día ${fechaALetras(r.fecha_nacimiento)}, ${hijoHija} de: ${r.padre_nombre||'___'} y de ${r.madre_nombre||'___'}.${r.padrino_nombre||r.madrina_nombre?' Padrinos: '+(r.padrino_nombre||'')+(r.padrino_nombre&&r.madrina_nombre?', ':'')+(r.madrina_nombre||'')+'.':''}`;
     rubrica = `Rúbrica, ${parroco}.`;
-    margen  = `Al margen se lee N.º <strong>${r.partida||'__'}</strong>, <strong>${nombre}</strong> ${margenFiliacion}.`;
+    margen  = `Al margen se lee N.º <strong>${r.partida||'__'}</strong>, <strong>${nombre}</strong> ${margenFiliacion}`;
 
   } else if (tipo === 'confirmacion') {
     const nombre     = `${r.nombres} ${r.apellidos}`.toUpperCase();
