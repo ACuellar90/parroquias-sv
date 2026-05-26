@@ -23,12 +23,11 @@ function renderTabla(registros) {
   }
   const desde = (paginaActual - 1) * POR_PAGINA;
   cont.innerHTML = `<table>
-    <thead><tr><th>#</th><th>Nombre completo</th><th>Nombre de confirmacion</th><th>Fecha</th><th>Folio</th><th>Ministro</th><th></th></tr></thead>
+    <thead><tr><th>#</th><th>Nombre completo</th><th>Fecha</th><th>Folio</th><th>Ministro</th><th></th></tr></thead>
     <tbody>
       ${registros.map((r,i) => `<tr>
         <td class="muted">${desde+i+1}</td>
         <td><strong>${r.nombres} ${r.apellidos}</strong></td>
-        <td>${r.nombre_confirmacion||'—'}</td>
         <td>${r.fecha_confirmacion ? new Date(r.fecha_confirmacion+'T12:00:00').toLocaleDateString('es-SV') : '—'}</td>
         <td class="muted">${r.folio||'—'}</td>
         <td class="muted">${r.ministro||'—'}</td>
@@ -112,7 +111,6 @@ function editarRegistro(id) {
   document.getElementById('f-lugarnac').value       = r.lugar_nacimiento || '';
   document.getElementById('f-sexo').value           = r.sexo || '';
   document.getElementById('f-fechconf').value       = r.fecha_confirmacion || '';
-  document.getElementById('f-nombresanto').value    = r.nombre_confirmacion || '';
   document.getElementById('f-padre').value          = r.padre_nombre || '';
   document.getElementById('f-madre').value          = r.madre_nombre || '';
   document.getElementById('f-padrino').value        = r.padrino_nombre || '';
@@ -127,7 +125,7 @@ function editarRegistro(id) {
 }
 
 function limpiar() {
-  ['f-nombres','f-apellidos','f-fechnac','f-lugarnac','f-sexo','f-fechconf','f-nombresanto',
+  ['f-nombres','f-apellidos','f-fechnac','f-lugarnac','f-sexo','f-fechconf',
    'f-padre','f-madre','f-padrino','f-madrina','f-lugar-bautismo','f-ministro',
    'f-anio-inicio','f-anio-fin','f-folio','f-notas']
   .forEach(id => document.getElementById(id).value = '');
@@ -149,21 +147,20 @@ async function guardar() {
 
   const registro = {
     nombres, apellidos,
-    fecha_nacimiento:    document.getElementById('f-fechnac').value || null,
-    lugar_nacimiento:    document.getElementById('f-lugarnac').value.trim() || null,
-    sexo:                document.getElementById('f-sexo').value || null,
-    fecha_confirmacion:  fechconf,
-    nombre_confirmacion: document.getElementById('f-nombresanto').value.trim() || null,
-    padre_nombre:        document.getElementById('f-padre').value.trim() || null,
-    madre_nombre:        document.getElementById('f-madre').value.trim() || null,
-    padrino_nombre:      document.getElementById('f-padrino').value.trim() || null,
-    madrina_nombre:      document.getElementById('f-madrina').value.trim() || null,
-    lugar_bautismo:      document.getElementById('f-lugar-bautismo').value.trim() || null,
-    ministro:            document.getElementById('f-ministro').value.trim() || null,
-    anio_inicio:         document.getElementById('f-anio-inicio').value.trim() || null,
-    anio_fin:            document.getElementById('f-anio-fin').value.trim() || null,
-    folio:               document.getElementById('f-folio').value.trim() || null,
-    notas:               document.getElementById('f-notas').value.trim() || null,
+    fecha_nacimiento:   document.getElementById('f-fechnac').value || null,
+    lugar_nacimiento:   document.getElementById('f-lugarnac').value.trim() || null,
+    sexo:               document.getElementById('f-sexo').value || null,
+    fecha_confirmacion: fechconf,
+    padre_nombre:       document.getElementById('f-padre').value.trim() || null,
+    madre_nombre:       document.getElementById('f-madre').value.trim() || null,
+    padrino_nombre:     document.getElementById('f-padrino').value.trim() || null,
+    madrina_nombre:     document.getElementById('f-madrina').value.trim() || null,
+    lugar_bautismo:     document.getElementById('f-lugar-bautismo').value.trim() || null,
+    ministro:           document.getElementById('f-ministro').value.trim() || null,
+    anio_inicio:        document.getElementById('f-anio-inicio').value.trim() || null,
+    anio_fin:           document.getElementById('f-anio-fin').value.trim() || null,
+    folio:              document.getElementById('f-folio').value.trim() || null,
+    notas:              document.getElementById('f-notas').value.trim() || null,
   };
 
   let error;
