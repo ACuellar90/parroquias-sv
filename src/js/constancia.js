@@ -5,7 +5,6 @@
 let _config = null;
 
 async function cargarConfiguracion() {
-  if (_config) return _config;
   const { data } = await db.from('configuracion').select('*').limit(1).single();
   _config = data || {};
   return _config;
@@ -74,15 +73,17 @@ function mostrarDialogoImpresion(r, tipo) {
   if (prev) prev.remove();
 
   const opciones = [
-    'Recibir el sacramento del matrimonio',
-    'Recibir el sacramento de la confirmacion',
-    'Recibir el sacramento de la primera comunion',
-    'Apadrinar un sacramento',
-    'Tramites migratorios',
-    'Tramites de estudio',
-    'Tramites de trabajo',
-    'Tramites civiles',
-    'Para los efectos que se estimen convenientes',
+    'recibir el sacramento del matrimonio',
+    'recibir el sacramento de la confirmacion',
+    'recibir el sacramento de la primera comunion',
+    'apadrinar un sacramento',
+    'tramites migratorios',
+    'tramites de estudio',
+    'tramites de trabajo',
+    'tramites civiles',
+    'los efectos que se estimen convenientes',
+    'ser padrino',
+    'ser madrina',
     'Otros',
   ];
 
@@ -149,90 +150,86 @@ async function generarConstancia() {
 
   document.getElementById('dialogo-impresion').remove();
 
-  const config  = await cargarConfiguracion();
-  const hoyObj  = new Date();
+  const config   = await cargarConfiguracion();
+  const hoyObj   = new Date();
   const hoyTexto = `${diaALetras(hoyObj.getDate())} días del mes de ${mesALetras(hoyObj.getMonth()+1)} del año ${numeroALetras(hoyObj.getFullYear())}`;
-  const lugar   = config.parroquia_municipio || r.municipio || r.parroquia || '___';
-  const parroquia = config.parroquia_nombre  || r.parroquia || '___';
+  const municipio = config.parroquia_municipio || '___';
+  const parroquia = config.parroquia_nombre    || '___';
 
-  const titulos = {
-    bautismo:     'FE DE BAUTISMO.',
-    confirmacion: 'FE DE CONFIRMACION.',
-    comunion:     'FE DE PRIMERA COMUNION.',
-    matrimonio:   'FE DE MATRIMONIO.',
-  };
-
-  let intro = '', cuerpo = '', nombre = '', margen = '', rubrica = '';
+  let titulo = '', intro = '', cuerpo = '', rubrica = '', margen = '';
 
   if (tipo === 'bautismo') {
-    nombre  = `${r.nombres} ${r.apellidos}`.toUpperCase();
-    const fraseInicio = config.b_frase_inicio || 'El infrascrito Párroco de';
-    const fraseLibro  = config.b_frase_libro  || 'En el libro de bautismos';
-    const verbo       = config.b_verbo        || 'bautizó solemnemente a';
-    const frasePadres = config.b_frase_padres || 'hijo legítimo/a de';
-    const filiacion   = r.filiacion || 'H.L.';
-    const hijoHija    = filiacion === 'H.L.'
+    const nombre    = `${r.nombres} ${r.apellidos}`.toUpperCase();
+    const filiacion = r.filiacion || 'H.L.';
+    const hijoHija  = filiacion === 'H.L.'
       ? (r.sexo === 'Femenino' ? 'hija legítima' : 'hijo legítimo')
       : (r.sexo === 'Femenino' ? 'hija natural'  : 'hijo natural');
 
-    intro  = `${fraseInicio} ${parroquia}, CERTIFICA QUE:\n${fraseLibro} N.° ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la partida que literalmente dice:`;
-    cuerpo = `En ${lugar} a ${fechaALetras(r.fecha_bautismo)}, el Padre: ${r.ministro||'___'}, ${verbo}: ${nombre} que nació el día ${fechaALetras(r.fecha_nacimiento)}, ${hijoHija} de: ${r.padre_nombre||'___'} y de ${r.madre_nombre||'___'}.${r.madrina_nombre?' Madrina: '+r.madrina_nombre+'.':''}${r.padrino_nombre?' Padrino: '+r.padrino_nombre+'.':''}`;
-    rubrica = `Rúbrica,                              ${r.ministro||'___'}.`;
-    margen  = `Al margen se lee N.° ${r.partida||'__'}, ${nombre} ${filiacion}.`;
+    titulo = 'FE DE BAUTISMO.';
+    intro  = `El infrascrito Párroco de la Parroquia ${parroquia}, CERTIFICA QUE:\nEn el libro de bautismos N.º <strong>${r.libro||'__'}</strong>, folio <strong>${r.folio||'__'}</strong>, asiento <strong>${r.partida||'__'}</strong>, se encuentra la que literalmente dice:`;
+    cuerpo = `En ${municipio} a ${fechaALetras(r.fecha_bautismo)}, el Padre: ${r.ministro||'___'}, bautizó solemnemente a: <strong>${nombre}</strong> que nació el día ${fechaALetras(r.fecha_nacimiento)}, ${hijoHija} de: ${r.padre_nombre||'___'} y de ${r.madre_nombre||'___'}.${r.padrino_nombre||r.madrina_nombre ? ' Padrinos: '+(r.padrino_nombre||'')+(r.padrino_nombre&&r.madrina_nombre?', ':' ')+(r.madrina_nombre||'')+'.':''}`;
+    rubrica = `Rúbrica, ${r.ministro||'___'}.`;
+    margen  = `Al margen se lee N.º <strong>${r.partida||'__'}</strong>, <strong>${nombre}</strong> ${filiacion}.`;
 
   } else if (tipo === 'confirmacion') {
-    nombre  = `${r.nombres} ${r.apellidos}`.toUpperCase();
-    const fraseInicio = config.c2_frase_inicio || 'El infrascrito Párroco de';
-    const fraseLibro  = config.c2_frase_libro  || 'En el libro de confirmaciones';
-    const verbo       = config.c2_verbo        || 'confirmó a';
-    intro  = `${fraseInicio} ${parroquia}, CERTIFICA QUE:\n${fraseLibro} N.° ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la partida que literalmente dice:`;
-    cuerpo = `En ${lugar} a ${fechaALetras(r.fecha_confirmacion)}, el Ministro: ${r.ministro||'___'}, ${verbo}: ${nombre} que nació el día ${fechaALetras(r.fecha_nacimiento)}.${r.nombre_confirmacion?' Tomó el nombre de confirmación: '+r.nombre_confirmacion+'.':''}${r.madrina_nombre?' Madrina: '+r.madrina_nombre+'.':''}${r.padrino_nombre?' Padrino: '+r.padrino_nombre+'.':''}`;
-    rubrica = `Rúbrica,                              ${r.ministro||'___'}.`;
-    margen  = `Al margen se lee N.° ${r.partida||'__'}, ${nombre} H.L.`;
+    const nombre     = `${r.nombres} ${r.apellidos}`.toUpperCase();
+    const anioInicio = r.anio_inicio ? numeroALetras(r.anio_inicio) : '___';
+    const anioFin    = r.anio_fin    ? numeroALetras(r.anio_fin)    : '___';
+    const hijaHijo   = r.sexo === 'Femenino' ? 'hija' : 'hijo';
+    const bautizadaO = r.sexo === 'Femenino' ? 'Bautizada' : 'Bautizado';
+
+    titulo = 'ACTA DE CONFIRMACIÓN';
+    intro  = `El infrascrito Párroco de la parroquia ${parroquia}, CERTIFICA QUE:\n\nEn el libro de expedientes de confirmaciones realizadas en el año ${anioInicio} al año ${anioFin}, folio <strong>${r.folio||'__'}</strong>, se encuentra la que literalmente dice:`;
+    cuerpo = `En la Parroquia ${parroquia}, el día ${fechaALetras(r.fecha_confirmacion)}, previa preparación catequética y doctrinal, se administró solemnemente el SACRAMENTO DE LA CONFIRMACIÓN a: <strong>${nombre}</strong>, ${hijaHijo} de: ${r.padre_nombre||'___'} y de ${r.madre_nombre||'___'}.${r.padrino_nombre||r.madrina_nombre?' Padrinos: '+(r.padrino_nombre||'')+(r.padrino_nombre&&r.madrina_nombre?', ' :'')+(r.madrina_nombre||'')+'.':''} ${bautizadaO} en la parroquia ${r.lugar_bautismo||parroquia}.\n\nMinistro Confirmante: ${r.ministro||'___'}.`;
+    rubrica = '';
+    margen  = '';
 
   } else if (tipo === 'comunion') {
-    nombre  = `${r.nombres} ${r.apellidos}`.toUpperCase();
-    const fraseInicio = config.co_frase_inicio || 'El infrascrito Párroco de';
-    const fraseLibro  = config.co_frase_libro  || 'En el libro de primeras comuniones';
-    const verbo       = config.co_verbo        || 'administró por primera vez la Sagrada Eucaristía a';
-    intro  = `${fraseInicio} ${parroquia}, CERTIFICA QUE:\n${fraseLibro} N.° ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la partida que literalmente dice:`;
-    cuerpo = `En ${lugar} a ${fechaALetras(r.fecha_comunion)}, el Padre: ${r.ministro||'___'}, ${verbo}: ${nombre} que nació el día ${fechaALetras(r.fecha_nacimiento)}.`;
-    rubrica = `Rúbrica,                              ${r.ministro||'___'}.`;
-    margen  = `Al margen se lee N.° ${r.partida||'__'}, ${nombre} H.L.`;
+    const nombre     = `${r.nombres} ${r.apellidos}`.toUpperCase();
+    const anioInicio = r.anio_inicio ? numeroALetras(r.anio_inicio) : '___';
+    const anioFin    = r.anio_fin    ? numeroALetras(r.anio_fin)    : '___';
+    const hijaHijo   = r.sexo === 'Femenino' ? 'hija' : 'hijo';
+
+    titulo = 'CONSTANCIA DE PRIMERA COMUNION';
+    intro  = `El infrascrito Párroco de la parroquia ${parroquia}, CERTIFICA QUE:\n\nEn el libro de expedientes de primeras comuniones realizadas en el año ${anioInicio} al año ${anioFin}, folio <strong>${r.folio||'__'}</strong>, se encuentra la que literalmente dice:`;
+    cuerpo = `En la Parroquia ${parroquia}, el día ${fechaALetras(r.fecha_comunion)}, previa preparación catequética y doctrinal, se administró solemnemente el SACRAMENTO DE LA PRIMERA COMUNION a: <strong>${nombre}</strong>, ${hijaHijo} de: ${r.padre_nombre||'___'} y de ${r.madre_nombre||'___'}.`;
+    rubrica = '';
+    margen  = '';
 
   } else if (tipo === 'matrimonio') {
-    nombre  = `${r.esposo_nombres} ${r.esposo_apellidos} y ${r.esposa_nombres} ${r.esposa_apellidos}`.toUpperCase();
-    const fraseInicio   = config.m_frase_inicio   || 'El infrascrito Párroco de';
-    const fraseLibro    = config.m_frase_libro    || 'En el libro de matrimonios';
-    const verbo         = config.m_verbo          || 'asistió al matrimonio';
-    const fraseTestigos = config.m_frase_testigos || 'Testigos';
-    intro  = `${fraseInicio} ${parroquia}, CERTIFICA QUE:\n${fraseLibro} N.° ${r.libro||'__'}, folio ${r.folio||'__'}, asiento ${r.partida||'__'}, se encuentra la partida que literalmente dice:`;
-    cuerpo = `En ${lugar} a ${fechaALetras(r.fecha_matrimonio)}, el Padre: ${r.ministro||'___'}, ${verbo} ${r.tipo==='civil'?'canónico y civil':'canónico'} de: ${r.esposo_nombres.toUpperCase()} ${r.esposo_apellidos.toUpperCase()}${r.esposo_lugar_nacimiento?', originario de '+r.esposo_lugar_nacimiento:''}, y ${r.esposa_nombres.toUpperCase()} ${r.esposa_apellidos.toUpperCase()}${r.esposa_lugar_nacimiento?', originaria de '+r.esposa_lugar_nacimiento:''}. ${fraseTestigos}: ${r.testigo1_nombre||'___'} y ${r.testigo2_nombre||'___'}.`;
-    rubrica = `Rúbrica,                              ${r.ministro||'___'}.`;
-    margen  = `Al margen se lee N.° ${r.partida||'__'}, ${nombre}.`;
+    const anioInicio  = r.anio_inicio ? numeroALetras(r.anio_inicio) : '___';
+    const anioFin     = r.anio_fin    ? numeroALetras(r.anio_fin)    : '___';
+    const esposo      = `${r.esposo_nombres} ${r.esposo_apellidos}`.toUpperCase();
+    const esposa      = `${r.esposa_nombres} ${r.esposa_apellidos}`.toUpperCase();
+
+    titulo = 'ACTA DE MATRIMONIO';
+    intro  = `El infrascrito Párroco de la parroquia ${parroquia}, CERTIFICA QUE:\n\nEn el libro de expedientes matrimoniales realizados en el año ${anioInicio} al año ${anioFin}. Expediente: <strong>${r.expediente||r.partida||'__'}</strong>, se encuentra la que literalmente dice:`;
+    cuerpo = `En la parroquia ${parroquia}, el día ${fechaALetras(r.fecha_matrimonio)}. Previo los trámites de Derecho civil y canónico el Sr. <strong>${esposo}</strong>${r.edad_esposo?', de '+r.edad_esposo+' años de edad':''}. Hijo de: ${r.padre_esposo||'___'} y de ${r.madre_esposo||'___'}. Contrajo matrimonio eclesiástico con: <strong>${esposa}</strong>${r.edad_esposa?', de '+r.edad_esposa+' años de edad':''}, hija de: ${r.padre_esposa||'___'} y de ${r.madre_esposa||'___'}.${r.padrinos?' Fueron padrinos: '+r.padrinos+'.':''}`;
+    rubrica = '';
+    margen  = '';
   }
 
-  const cierre = `Es conforme a su original con la cual se confrontó, y para los efectos de ${efectos}, se extiende la presente en ${lugar}, a ${hoyTexto}.`;
-  const anotacionesHtml = anotaciones ? `<p style="font-style:italic;margin-top:0.5rem;">${anotaciones}</p>` : '';
+  const anotacionesHtml = anotaciones ? `<p style="margin-top:0.75rem; font-style:italic;">${anotaciones}</p>` : '';
+  const cierre = `Es conforme a su original con la cual se confrontó y para los efectos de: ${efectos}, se extiende la presente en ${municipio}, a ${hoyTexto}.`;
 
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
   <title>.</title>
   <style>
     @page { size: 216mm 356mm; margin: 10cm 3.5cm 2.5cm 2.5cm; }
     * { box-sizing:border-box; margin:0; padding:0; }
-    body { font-family:'Times New Roman',Times,serif; font-size:12pt; color:#000; line-height:1.9; }
+    body { font-family:'Times New Roman',Times,serif; font-size:12pt; color:#000; line-height:1.9; text-align:justify; }
     .titulo { text-align:center; font-size:13pt; font-weight:bold; text-decoration:underline; margin-bottom:1.5rem; }
-    .intro { text-align:justify; white-space:pre-wrap; margin-bottom:1.5rem; }
-    .cuerpo { text-align:justify; margin-bottom:1.5rem; }
+    .intro { margin-bottom:1.5rem; white-space:pre-wrap; }
+    .cuerpo { margin-bottom:1.5rem; }
     .rubrica { margin-top:1.5rem; margin-bottom:1.5rem; }
-    .margen { margin-bottom:1.5rem; font-weight:bold; }
-    .cierre { text-align:justify; }
+    .margen { margin-bottom:1.5rem; font-weight:bold; padding-left:2cm; }
+    .cierre { }
   </style></head><body>
-  <div class="titulo">${titulos[tipo]}</div>
+  <div class="titulo">${titulo}</div>
   <div class="intro">${intro}</div>
-  <div class="cuerpo">${cuerpo}</div>
-  <div class="rubrica">${rubrica}</div>
-  <div class="margen">${margen}${anotacionesHtml}</div>
+  <div class="cuerpo">${cuerpo}${anotacionesHtml}</div>
+  ${rubrica ? `<div class="rubrica">${rubrica}</div>` : ''}
+  ${margen  ? `<div class="margen">${margen}</div>`   : ''}
   <div class="cierre">${cierre}</div>
   </body></html>`;
 

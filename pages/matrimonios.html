@@ -40,6 +40,7 @@
       <button class="btn-logout" onclick="logout()"><i class="ti ti-logout"></i> Cerrar sesion</button>
     </div>
   </aside>
+
   <div class="topbar">
     <div class="topbar-left">
       <span class="topbar-breadcrumb">Libros Sacramentales</span>
@@ -50,6 +51,7 @@
       <span class="topbar-date" id="fecha-hoy"></span>
     </div>
   </div>
+
   <main class="main">
     <div id="vista-lista">
       <div class="page-header">
@@ -70,6 +72,7 @@
         <div id="paginacion-matrimonios"></div>
       </div>
     </div>
+
     <div id="vista-formulario" style="display:none;">
       <div class="page-header">
         <div class="page-header-left">
@@ -78,17 +81,21 @@
         </div>
         <button class="btn-secondary" onclick="mostrarLista()"><i class="ti ti-arrow-left"></i> Volver al libro</button>
       </div>
+
       <div class="form-steps">
         <div class="step active" id="step-1"><div class="step-num">1</div><div class="step-label">El Esposo</div></div>
         <div class="step-connector"></div>
         <div class="step" id="step-2"><div class="step-num">2</div><div class="step-label">La Esposa</div></div>
         <div class="step-connector"></div>
-        <div class="step" id="step-3"><div class="step-num">3</div><div class="step-label">Testigos</div></div>
+        <div class="step" id="step-3"><div class="step-num">3</div><div class="step-label">Padrinos</div></div>
         <div class="step-connector"></div>
         <div class="step" id="step-4"><div class="step-num">4</div><div class="step-label">Datos del Acta</div></div>
       </div>
+
       <div class="card">
         <div id="alerta" class="alert"></div>
+
+        <!-- PASO 1 — El Esposo -->
         <div id="panel-1">
           <div class="form-section">
             <div class="form-section-header"><i class="ti ti-user"></i><div class="form-section-title">Datos del Esposo</div></div>
@@ -97,12 +104,22 @@
               <div class="field field-required"><label>Apellidos</label><input type="text" id="f-espapellidos" placeholder="Apellidos completos"></div>
               <div class="field"><label>Fecha de Nacimiento</label><input type="date" id="f-espfechnac"></div>
               <div class="field"><label>Lugar de Nacimiento</label><input type="text" id="f-esplugarnac" placeholder="Ciudad, Departamento"></div>
+              <div class="field"><label>Edad al momento del matrimonio</label><input type="text" id="f-edad-esposo" placeholder="Ej: 26"></div>
+            </div>
+          </div>
+          <div class="form-section" style="margin-top:1.5rem;">
+            <div class="form-section-header"><i class="ti ti-users"></i><div class="form-section-title">Padres del Esposo</div></div>
+            <div class="grid-2">
+              <div class="field"><label>Nombre del Padre</label><input type="text" id="f-padre-esposo" placeholder="Nombre completo"></div>
+              <div class="field"><label>Nombre de la Madre</label><input type="text" id="f-madre-esposo" placeholder="Nombre completo"></div>
             </div>
           </div>
           <div class="form-actions">
             <button class="btn-primary" onclick="irPaso(2)">Siguiente <i class="ti ti-arrow-right"></i></button>
           </div>
         </div>
+
+        <!-- PASO 2 — La Esposa -->
         <div id="panel-2" style="display:none;">
           <div class="form-section">
             <div class="form-section-header"><i class="ti ti-user"></i><div class="form-section-title">Datos de la Esposa</div></div>
@@ -111,6 +128,14 @@
               <div class="field field-required"><label>Apellidos</label><input type="text" id="f-espaapellidos" placeholder="Apellidos completos"></div>
               <div class="field"><label>Fecha de Nacimiento</label><input type="date" id="f-espafechnac"></div>
               <div class="field"><label>Lugar de Nacimiento</label><input type="text" id="f-espalugarnac" placeholder="Ciudad, Departamento"></div>
+              <div class="field"><label>Edad al momento del matrimonio</label><input type="text" id="f-edad-esposa" placeholder="Ej: 25"></div>
+            </div>
+          </div>
+          <div class="form-section" style="margin-top:1.5rem;">
+            <div class="form-section-header"><i class="ti ti-users"></i><div class="form-section-title">Padres de la Esposa</div></div>
+            <div class="grid-2">
+              <div class="field"><label>Nombre del Padre</label><input type="text" id="f-padre-esposa" placeholder="Nombre completo"></div>
+              <div class="field"><label>Nombre de la Madre</label><input type="text" id="f-madre-esposa" placeholder="Nombre completo"></div>
             </div>
           </div>
           <div class="form-actions">
@@ -118,12 +143,17 @@
             <button class="btn-primary" onclick="irPaso(3)">Siguiente <i class="ti ti-arrow-right"></i></button>
           </div>
         </div>
+
+        <!-- PASO 3 — Padrinos -->
         <div id="panel-3" style="display:none;">
           <div class="form-section">
-            <div class="form-section-header"><i class="ti ti-users"></i><div class="form-section-title">Testigos del Matrimonio</div></div>
-            <div class="grid-2">
-              <div class="field"><label>Testigo 1</label><input type="text" id="f-testigo1" placeholder="Nombre completo"></div>
-              <div class="field"><label>Testigo 2</label><input type="text" id="f-testigo2" placeholder="Nombre completo"></div>
+            <div class="form-section-header"><i class="ti ti-heart"></i><div class="form-section-title">Padrinos del Matrimonio</div></div>
+            <div class="grid-1">
+              <div class="field">
+                <label>Nombres de los padrinos</label>
+                <input type="text" id="f-padrinos" placeholder="Ej: José Cruz Beltrán y Berta Alicia de Beltrán, Carlos Cerén y Victoria de Cerén">
+                <span style="font-size:11px; color:var(--gray-400); margin-top:3px;">Escribe todos los padrinos separados por coma</span>
+              </div>
             </div>
           </div>
           <div class="form-actions">
@@ -131,23 +161,18 @@
             <button class="btn-primary" onclick="irPaso(4)">Siguiente <i class="ti ti-arrow-right"></i></button>
           </div>
         </div>
+
+        <!-- PASO 4 — Datos del Acta -->
         <div id="panel-4" style="display:none;">
           <div class="form-section">
             <div class="form-section-header"><i class="ti ti-book"></i><div class="form-section-title">Datos del Acta Eclesiastica</div></div>
             <div class="grid-2">
               <div class="field field-required"><label>Fecha del Matrimonio</label><input type="date" id="f-fecha"></div>
-              <div class="field"><label>Tipo de Matrimonio</label>
-                <select id="f-tipo"><option value="canonico">Canonico</option><option value="civil">Civil tambien</option></select>
-              </div>
+              <div class="field"><label>Expediente N°</label><input type="text" id="f-expediente" placeholder="Ej: 189"></div>
             </div>
             <div class="grid-3" style="margin-top:1rem;">
-              <div class="field"><label>Libro N°</label><input type="text" id="f-libro" placeholder="Ej: 05"></div>
-              <div class="field"><label>Folio N°</label><input type="text" id="f-folio" placeholder="Ej: 123"></div>
-              <div class="field"><label>Partida N°</label><input type="text" id="f-partida" placeholder="Ej: 045"></div>
-            </div>
-            <div class="grid-2" style="margin-top:1rem;">
-              <div class="field"><label>Parroquia</label><input type="text" id="f-parroquia" placeholder="Nombre de la parroquia"></div>
-              <div class="field"><label>Municipio / Departamento</label><input type="text" id="f-lugar" placeholder="San Salvador, San Salvador"></div>
+              <div class="field"><label>Año inicio del libro</label><input type="text" id="f-anio-inicio" placeholder="Ej: 1999"></div>
+              <div class="field"><label>Año fin del libro</label><input type="text" id="f-anio-fin" placeholder="Ej: 2003"></div>
             </div>
             <div class="grid-1" style="margin-top:1rem;">
               <div class="field"><label>Sacerdote Ministro</label><input type="text" id="f-ministro" placeholder="Nombre del sacerdote"></div>
@@ -166,11 +191,11 @@
     </div>
   </main>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="../src/js/constancia.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../src/js/config.js"></script>
 <script src="../src/js/auth.js"></script>
+<script src="../src/js/constancia.js"></script>
 <script src="../src/js/matrimonios.js"></script>
 <script>
   document.getElementById('fecha-hoy').textContent = new Date().toLocaleDateString('es-SV',{weekday:'long',year:'numeric',month:'long',day:'numeric'});

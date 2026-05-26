@@ -40,6 +40,7 @@
       <button class="btn-logout" onclick="logout()"><i class="ti ti-logout"></i> Cerrar sesion</button>
     </div>
   </aside>
+
   <div class="topbar">
     <div class="topbar-left">
       <span class="topbar-breadcrumb">Libros Sacramentales</span>
@@ -50,6 +51,7 @@
       <span class="topbar-date" id="fecha-hoy"></span>
     </div>
   </div>
+
   <main class="main">
     <div id="vista-lista">
       <div class="page-header">
@@ -70,6 +72,7 @@
         <div id="paginacion-confirmaciones"></div>
       </div>
     </div>
+
     <div id="vista-formulario" style="display:none;">
       <div class="page-header">
         <div class="page-header-left">
@@ -78,15 +81,19 @@
         </div>
         <button class="btn-secondary" onclick="mostrarLista()"><i class="ti ti-arrow-left"></i> Volver al libro</button>
       </div>
+
       <div class="form-steps">
         <div class="step active" id="step-1"><div class="step-num">1</div><div class="step-label">Datos Personales</div></div>
         <div class="step-connector"></div>
-        <div class="step" id="step-2"><div class="step-num">2</div><div class="step-label">Padrinos</div></div>
+        <div class="step" id="step-2"><div class="step-num">2</div><div class="step-label">Padres y Padrinos</div></div>
         <div class="step-connector"></div>
         <div class="step" id="step-3"><div class="step-num">3</div><div class="step-label">Datos del Acta</div></div>
       </div>
+
       <div class="card">
         <div id="alerta" class="alert"></div>
+
+        <!-- PASO 1 -->
         <div id="panel-1">
           <div class="form-section">
             <div class="form-section-header"><i class="ti ti-user"></i><div class="form-section-title">Datos del Confirmado</div></div>
@@ -108,8 +115,17 @@
             <button class="btn-primary" onclick="irPaso(2)">Siguiente <i class="ti ti-arrow-right"></i></button>
           </div>
         </div>
+
+        <!-- PASO 2 -->
         <div id="panel-2" style="display:none;">
           <div class="form-section">
+            <div class="form-section-header"><i class="ti ti-users"></i><div class="form-section-title">Datos de los Padres</div></div>
+            <div class="grid-2">
+              <div class="field"><label>Nombre del Padre</label><input type="text" id="f-padre" placeholder="Nombre completo"></div>
+              <div class="field"><label>Nombre de la Madre</label><input type="text" id="f-madre" placeholder="Nombre completo"></div>
+            </div>
+          </div>
+          <div class="form-section" style="margin-top:1.5rem;">
             <div class="form-section-header"><i class="ti ti-heart"></i><div class="form-section-title">Datos de los Padrinos</div></div>
             <div class="grid-2">
               <div class="field"><label>Padrino</label><input type="text" id="f-padrino" placeholder="Nombre completo"></div>
@@ -121,20 +137,21 @@
             <button class="btn-primary" onclick="irPaso(3)">Siguiente <i class="ti ti-arrow-right"></i></button>
           </div>
         </div>
+
+        <!-- PASO 3 -->
         <div id="panel-3" style="display:none;">
           <div class="form-section">
             <div class="form-section-header"><i class="ti ti-book"></i><div class="form-section-title">Datos del Acta Eclesiastica</div></div>
             <div class="grid-3">
-              <div class="field"><label>Libro N°</label><input type="text" id="f-libro" placeholder="Ej: 05"></div>
-              <div class="field"><label>Folio N°</label><input type="text" id="f-folio" placeholder="Ej: 123"></div>
-              <div class="field"><label>Partida N°</label><input type="text" id="f-partida" placeholder="Ej: 045"></div>
-            </div>
-            <div class="grid-2" style="margin-top:1rem;">
-              <div class="field"><label>Parroquia</label><input type="text" id="f-parroquia" placeholder="Nombre de la parroquia"></div>
-              <div class="field"><label>Municipio / Departamento</label><input type="text" id="f-lugar" placeholder="San Salvador, San Salvador"></div>
+              <div class="field"><label>Año inicio del libro</label><input type="text" id="f-anio-inicio" placeholder="Ej: 1999"></div>
+              <div class="field"><label>Año fin del libro</label><input type="text" id="f-anio-fin" placeholder="Ej: 2002"></div>
+              <div class="field"><label>Folio N°</label><input type="text" id="f-folio" placeholder="Ej: 09"></div>
             </div>
             <div class="grid-1" style="margin-top:1rem;">
-              <div class="field"><label>Ministro (Obispo o Sacerdote)</label><input type="text" id="f-ministro" placeholder="Nombre del ministro que administro el sacramento"></div>
+              <div class="field"><label>Lugar donde fue bautizado/a</label><input type="text" id="f-lugar-bautismo" placeholder="Ej: parroquia San Juan Evangelista"></div>
+            </div>
+            <div class="grid-1" style="margin-top:1rem;">
+              <div class="field"><label>Ministro Confirmante (con titulo)</label><input type="text" id="f-ministro" placeholder="Ej: Monseñor José Luis Escobar Alas"></div>
             </div>
             <div class="grid-1" style="margin-top:1rem;">
               <div class="field"><label>Observaciones</label><textarea id="f-notas" placeholder="Notas adicionales..."></textarea></div>
@@ -150,11 +167,11 @@
     </div>
   </main>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="../src/js/constancia.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../src/js/config.js"></script>
 <script src="../src/js/auth.js"></script>
+<script src="../src/js/constancia.js"></script>
 <script src="../src/js/confirmaciones.js"></script>
 <script>
   document.getElementById('fecha-hoy').textContent = new Date().toLocaleDateString('es-SV',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
